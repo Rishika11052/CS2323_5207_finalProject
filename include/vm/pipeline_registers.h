@@ -1,8 +1,8 @@
 #ifndef PIPELINE_REGISTERS_H
 #define PIPELINE_REGISTERS_H
 
-#include <cstdint> // For fixed-width integer types like uint32_t, uint64_t
-#include "vm/alu.h" // For the alu::AluOp enum
+#include <cstdint>
+#include "vm/alu.h"
 
 // --- IF/ID Register ---
 // Holds the output of the Fetch stage, needed by Decode.
@@ -33,6 +33,7 @@ struct ID_EX_Register {
     uint8_t  rd = 0;              // Destination register index (for R, I, U, J types)
     uint8_t  rs1_idx = 0;         // Source register 1 index (needed for forwarding later)
     uint8_t  rs2_idx = 0;         // Source register 2 index (needed for forwarding later)
+    uint8_t  funct3 = 0;          // funct3 field (for branch decisions)
 
     // Data passed through
     uint64_t pc_plus_4 = 0;       // Passed from IF/ID (for JAL/JALR writeback)
@@ -56,6 +57,7 @@ struct EX_MEM_Register {
     uint64_t alu_result = 0;      // Result from ALU (used for address or WB data)
     uint64_t reg2_value = 0;      // Value from rs2 (passed through for Store instructions)
     uint8_t  rd = 0;              // Destination register index (passed through)
+    uint8_t  funct3 = 0;          // funct3 field (for determining load/store size)
 
     bool valid = false;           // Is the data valid?
 
