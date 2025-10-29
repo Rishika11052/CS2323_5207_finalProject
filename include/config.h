@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 /**
  * @namespace vm_config
@@ -45,6 +46,16 @@ struct VmConfig {
 
   VmTypes getVmType() const {
     return vm_type;
+  }
+  std::string getVmTypeString() const {
+    switch (vm_type) {
+      case VmTypes::SINGLE_STAGE:
+        return "single_stage";
+      case VmTypes::MULTI_STAGE:
+        return "multi_stage";
+      default:
+        return "unknown";
+    }
   }
   void setRunStepDelay(uint64_t delay) {
     run_step_delay = delay;
@@ -120,76 +131,10 @@ struct VmConfig {
     return d_extension_enabled;
   }
 
-  void modifyConfig(const std::string &section, const std::string &key, const std::string &value) {
-    if (section == "Execution") {
-      if (key == "processor_type") {
-        if (value == "single_stage") {
-          setVmType(VmTypes::SINGLE_STAGE);
-        } else if (value == "multi_stage") {
-          setVmType(VmTypes::MULTI_STAGE);
-        } else {
-          throw std::invalid_argument("Unknown VM type: " + value);
-        }
-      } else if (key == "run_step_delay") {
-        setRunStepDelay(std::stoull(value));
-      } else if (key == "instruction_execution_limit") {
-        setInstructionExecutionLimit(std::stoull(value));
-      }
-      
-      else {
-        throw std::invalid_argument("Unknown key: " + key);
-      }
-    } else if (section == "Memory") {
-      if (key == "memory_size") {
-        setMemorySize(std::stoull(value));
-      } else if (key == "memory_block_size") {
-        setMemoryBlockSize(std::stoull(value));
-      } else if (key == "data_section_start") {
-        setDataSectionStart(std::stoull(value, nullptr, 16));
-      } else if (key == "text_section_start") {
-        setTextSectionStart(std::stoull(value, nullptr, 16));
-      } else if (key == "bss_section_start") {
-        setBssSectionStart(std::stoull(value, nullptr, 16));
-      }
-      
-      
-      
-      else {
-        throw std::invalid_argument("Unknown key: " + key);
-      }
-    } 
+  void modifyConfig(const std::string &section, const std::string &key, const std::string &value, bool shouldSave = true);
 
-    else if (section == "Assembler") {
-      if (key == "m_extension_enabled") {
-        if (value == "true") {
-          setMExtensionEnabled(true);
-        } else if (value == "false") {
-          setMExtensionEnabled(false);
-        } else {
-          throw std::invalid_argument("Unknown value: " + value);
-        }
-      } else if (key == "f_extension_enabled") {
-        if (value == "true") {
-          setFExtensionEnabled(true);
-        } else if (value == "false") {
-          setFExtensionEnabled(false);  
-        } else {
-          throw std::invalid_argument("Unknown value: " + value);
-        }
-      } else if (key == "d_extension_enabled") {
-        if (value == "true") {
-          setDExtensionEnabled(true);
-        } else if (value == "false") {
-          setDExtensionEnabled(false);
-        } else {
-          throw std::invalid_argument("Unknown value: " + value);
-        }
-      }
-    }
-    else {
-      throw std::invalid_argument("Unknown section: " + section);
-    }
-  }
+  void loadConfig(const std::filesystem::path &config_path);
+  void saveConfig(const std::filesystem::path &config_path) const;
 
 
 };

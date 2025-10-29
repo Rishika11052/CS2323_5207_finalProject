@@ -58,15 +58,10 @@ public:
 
     std::string output_status_;
 
-    
-
-
-
     MemoryController memory_controller_;
     RegisterFile registers_;
     
     alu::Alu alu_;
-
 
     void LoadProgram(const AssembledProgram &program);
     uint64_t program_size_ = 0;
@@ -102,6 +97,18 @@ public:
         std::lock_guard<std::mutex> lock(input_mutex_);
         input_queue_.push(input);
         input_cv_.notify_one();
+    }
+
+    virtual void RequestStop() {
+        stop_requested_ = true;
+    }
+    
+    virtual bool IsStopRequested() const {
+        return stop_requested_;
+    }
+    
+    virtual void ClearStop() {
+        stop_requested_ = false;
     }
 
 };
