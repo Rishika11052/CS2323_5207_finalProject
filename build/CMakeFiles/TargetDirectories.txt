@@ -1,0 +1,6 @@
+/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/vm.dir
+/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/run.dir
+/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/debug.dir
+/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/valgrind.dir
+/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/edit_cache.dir
+/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/rebuild_cache.dir

@@ -324,3 +324,61 @@ void RV5SVM::pipelineWriteBack(const MEM_WB_Register& mem_wb_reg) {
     instructions_retired_++;
 
 }
+
+void RV5SVM::Run() {
+
+    ClearStop();
+    
+    while(!stop_requested_ && (program_counter_ < program_size_ || if_id_reg_.valid || id_ex_reg_.valid || ex_mem_reg_.valid || mem_wb_reg_.valid)) {
+        PipelinedStep();
+        std::cout << "Program Counter: " << program_counter_ << std::endl;
+    }
+
+    if (program_counter_ >= program_size_) {
+        std::cout << "VM_PROGRAM_END" << std::endl;
+        output_status_ = "VM_PROGRAM_END";
+    }
+
+    DumpState(globals::vm_state_dump_file_path);
+    DumpRegisters(globals::registers_dump_file_path, registers_);
+
+}
+
+void RV5SVM::Step() {
+ 
+    if (program_counter_ >= program_size_ && !if_id_reg_.valid && !id_ex_reg_.valid && !ex_mem_reg_.valid && !mem_wb_reg_.valid){
+        std::cout << "VM_PROGRAM_END" << std::endl;
+        output_status_ = "VM_PROGRAM_END";
+        return;
+    }
+
+    PipelinedStep();
+
+    if (program_counter_ < program_size_ || if_id_reg_.valid || id_ex_reg_.valid || ex_mem_reg_.valid || mem_wb_reg_.valid) {
+        std::cout << "VM_STEP_COMPLETED" << std::endl;
+        output_status_ = "VM_STEP_COMPLETED";
+    } else {
+        std::cout << "VM_PROGRAM_END" << std::endl;
+        output_status_ = "VM_PROGRAM_END";
+    }
+
+    DumpState(globals::vm_state_dump_file_path);
+    DumpRegisters(globals::registers_dump_file_path, registers_);
+    
+}
+
+void RV5SVM::DebugRun() {
+    std::cout << "VM_ERROR: DebugRun() is not supported in multi_stage mode." << std::endl;
+    output_status_ = "VM_ERROR";
+    RequestStop();
+}
+
+void RV5SVM::Undo() {
+    std::cout << "VM_ERROR: Undo() is not yet implemented for multi_stage mode." << std::endl;
+    output_status_ = "VM_ERROR";
+}
+
+void RV5SVM::Redo() {
+    std::cout << "VM_ERROR: Redo() is not yet implemented for multi_stage mode." << std::endl;
+    output_status_ = "VM_ERROR";
+}

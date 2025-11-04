@@ -87,8 +87,59 @@ int main(int argc, char *argv[]) {
         globals::vm_as_backend = true;
         std::cout << "VM backend mode enabled.\n";
     } else if (arg == "--start-vm") {
-        break;
-
+        break;    
+    } else if (arg == "--verify") {
+      if (++i >= argc) {
+          std::cerr << "Error: No file specified for verification.\n";
+          return 1;
+      }
+  
+      std::string filename = argv[i];
+      try {
+          // Step 1: Assemble the program
+          AssembledProgram program = assemble(filename);
+          std::cout << "Verifying program: " << filename << std::endl;
+  
+          // Step 2: Create both simulators
+          std::unique_ptr<VmBase> single_vm = createVMInstance(vm_config::VmTypes::SINGLE_STAGE);
+          std::unique_ptr<VmBase> multi_vm  = createVMInstance(vm_config::VmTypes::MULTI_STAGE);
+  
+          // Step 3: Load the same program in both
+          single_vm->LoadProgram(program);
+          multi_vm->LoadProgram(program);
+  
+          // Step 4: Run both simulators
+          single_vm->Run();
+          multi_vm->Run();
+  
+          // Step 5: Compare final register values
+          bool pass = true;
+          std::cout << "--- Verification Results ---" << std::endl;
+          for (int r = 0; r < 32; ++r) {
+              // Access registers via the base pointer
+              uint64_t val_single = single_vm->registers_.ReadGpr(r);
+              uint64_t val_multi  = multi_vm->registers_.ReadGpr(r);
+  
+              if (val_single != val_multi) {
+                  pass = false;
+                  std::cout << "❌ Mismatch in x" << r
+                            << ": single=0x" << std::hex << val_single
+                            << ", multi=0x" << val_multi << std::dec << std::endl;
+              }
+          }
+  
+          // Step 6: Print result
+          if (pass)
+              std::cout << "✅ Verification PASSED: All registers match." << std::endl;
+          else
+              std::cout << "❌ Verification FAILED: See mismatches above." << std::endl;
+  
+          return 0; // Exit after verification
+  
+      } catch (const std::exception &e) {
+          std::cerr << "Verification failed: " << e.what() << std::endl;
+          return 1;
+      }
     } else {
         std::cerr << "Unknown option: " << arg << '\n';
         return 1;

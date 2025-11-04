@@ -2,7 +2,6 @@
 .vscode/
 examples/.vscode/
 .VSCodeCounter/
-build/
 test/test.txt
 test/testex
 Jsons/
