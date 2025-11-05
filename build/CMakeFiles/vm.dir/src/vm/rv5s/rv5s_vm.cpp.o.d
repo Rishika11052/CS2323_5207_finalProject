@@ -292,6 +292,7 @@ CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: \
  /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/rvss/../alu.h \
  /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/alu.h \
  /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/pipeline_registers.h \
+ /usr/include/c++/13/stack /usr/include/c++/13/bits/stl_stack.h \
  /home/aricmaji/Downloads/CS2323/FinalProject/include/globals.h \
  /home/aricmaji/Downloads/CS2323/FinalProject/include/utils.h \
  /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/registers.h \

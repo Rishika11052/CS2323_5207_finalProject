@@ -6610,6 +6610,7 @@ CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: /home/aricmaji/Downloads/CS2323/Fin
   /usr/include/c++/13/bits/stl_multimap.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_queue.h \
+  /usr/include/c++/13/bits/stl_stack.h \
   /usr/include/c++/13/bits/stl_tree.h \
   /usr/include/c++/13/bits/stl_uninitialized.h \
   /usr/include/c++/13/bits/stl_vector.h \
@@ -6676,6 +6677,7 @@ CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: /home/aricmaji/Downloads/CS2323/Fin
   /usr/include/c++/13/ratio \
   /usr/include/c++/13/semaphore \
   /usr/include/c++/13/sstream \
+  /usr/include/c++/13/stack \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/stop_token \
   /usr/include/c++/13/streambuf \
