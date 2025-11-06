@@ -17,10 +17,10 @@
 std::unique_ptr<VmBase> createVMInstance(vm_config::VmTypes vmType) {
 
   if (vmType == vm_config::VmTypes::SINGLE_STAGE) {
-    std::cout << "Initializing 5-Stage VM..." << std::endl;
+    std::cout << "Initializing Single-Stage VM..." << std::endl;
     return std::make_unique<RVSSVM>();
   } else {
-    std::cout << "Initializing Single-Stage VM..." << std::endl;
+    std::cout << "Initializing 5-Stage VM..." << std::endl;
     return std::make_unique<RV5SVM>();
   }
 
@@ -33,6 +33,12 @@ int main(int argc, char *argv[]) {
   }
 
   setupVmStateDirectory();
+  try {
+    vm_config::config.loadConfig(globals::config_file_path);
+  } catch (const std::exception& e) {
+      std::cerr << "Warning: Error loading configuration: " << e.what() << std::endl;
+      std::cerr << "Using default configuration." << std::endl;
+  }
 
   for (int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
@@ -198,8 +204,47 @@ int main(int argc, char *argv[]) {
         std::cout << "VM_MODIFY_CONFIG_ERROR" << std::endl;
         continue;
       }
+
+      std::string section = command.args[0];
+      std::string key = command.args[1];
+      std::string value = command.args[2];
+
       try {
-        vm_config::config.modifyConfig(command.args[0], command.args[1], command.args[2]);
+
+        if (section == "Execution" && key == "processor_type") {
+          
+          vm_config::VmTypes oldType = vm_config::config.getVmType();
+          vm_config::config.modifyConfig(command.args[0], command.args[1], command.args[2]);
+          vm_config::VmTypes newType = vm_config::config.getVmType();
+
+          if (oldType != newType) {
+
+            std::cout << "Processor type changed from " << (oldType == vm_config::VmTypes::SINGLE_STAGE ? "single_stage" : "multi_stage") << " to " << (newType == vm_config::VmTypes::SINGLE_STAGE ? "single_stage" : "multi_stage") << std::endl;
+
+            if (vm_running) {
+              if (vm) vm->RequestStop();
+              if (vm_thread.joinable()) vm_thread.join();
+              vm_running = false;
+            }
+            vm.reset();
+            vm = createVMInstance(newType);
+            
+            if (!program.filename.empty()) {
+              std::cout << "Reloading program after VM type change: " << program.filename << std::endl;
+              if (vm) vm->LoadProgram(program);
+              else std::cerr << "Error: VM instance is not initialized after type change." << std::endl;
+            }
+
+            std::cout << "VM type changed successfully." << std::endl;
+            
+          }
+
+        } else {
+
+          vm_config::config.modifyConfig(command.args[0], command.args[1], command.args[2]);
+
+        }
+
         std::cout << "VM_MODIFY_CONFIG_SUCCESS" << std::endl;
       } catch (const std::exception &e) {
         std::cout << "VM_MODIFY_CONFIG_ERROR" << std::endl;

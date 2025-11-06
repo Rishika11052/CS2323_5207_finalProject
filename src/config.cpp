@@ -42,6 +42,15 @@ namespace vm_config
             {
                 setInstructionExecutionLimit(std::stoull(value));
             }
+            else if (key == "hazard_detection") {
+                // Do nothing for now
+            } else if (key == "forwarding") {
+                // Do nothing for now
+            } else if (key == "branch_prediction") {
+                // Do nothing for now
+            // --- END ADD ---
+    
+            }
 
             else
             {
@@ -52,9 +61,13 @@ namespace vm_config
         {
             if (key == "memory_size")
             {
-                setMemorySize(std::stoull(value));
+                setMemorySize(std::stoull(value, nullptr, 16));
             }
             else if (key == "memory_block_size")
+            {
+                setMemoryBlockSize(std::stoull(value));
+            }
+            else if (key == "block_size")
             {
                 setMemoryBlockSize(std::stoull(value));
             }
@@ -124,6 +137,16 @@ namespace vm_config
                     throw std::invalid_argument("Unknown value: " + value);
                 }
             }
+        }
+
+        else if (section == "General") {
+            // Do nothing for now (e.g., for 'name=vm')
+        } else if (section == "Cache") {
+            // Do nothing for now
+        } else if (section == "BranchPrediction") {
+            // Do nothing for now
+        // --- END ADD ---
+    
         }
         else
         {
