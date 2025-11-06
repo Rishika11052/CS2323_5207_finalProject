@@ -40,6 +40,11 @@ struct VmConfig {
   bool f_extension_enabled = true;
   bool d_extension_enabled = true;
 
+  // Pipeline Toggles
+  bool hazard_detection_enabled = false;
+  bool forwarding_enabled = false;
+  std::string branch_prediction_type = "none";
+
   void setVmType(const VmTypes &type) {
     vm_type = type;
   }
@@ -129,6 +134,32 @@ struct VmConfig {
 
   bool getDExtensionEnabled() const {
     return d_extension_enabled;
+  }
+
+  //why so many get set functions = encapsulation
+
+  void setHazardDetectionEnabled(bool enabled){
+    hazard_detection_enabled = enabled;
+  }
+
+  bool isHazardDetectionEnabled() const{
+    return hazard_detection_enabled;
+  }
+
+  void setForwardingEnabled(bool enabled){
+    forwarding_enabled = enabled;
+  }
+
+  bool isForwardingEnabled() const{
+    return forwarding_enabled;
+  }
+
+  void setBranchPredictionType(const std::string&type){
+    branch_prediction_type = type;
+  }
+
+  std::string getBranchPredictionType() const{
+    return branch_prediction_type;
   }
 
   void modifyConfig(const std::string &section, const std::string &key, const std::string &value, bool shouldSave = true);

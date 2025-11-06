@@ -47,7 +47,7 @@ struct CycleDelta {
     bool instruction_retired = false;
 };
 
-class RV5SVM : public VmBase {
+class RV5SVM : public VmBase {  
 
     public:
         IF_ID_Register if_id_reg_{};
@@ -66,6 +66,22 @@ class RV5SVM : public VmBase {
         void PipelinedStep();
 
     private:
+
+        // the flag that pipelineDecode will use to tell pipelineStep whether to stall or not
+        bool id_stall_ = false;
+
+        enum class ForwardSource{
+            kNone, //use the value from the register file
+            kFromExMem, // Forward from the EX/MEM pipeline register
+            kFromMemWb // forward form the MEM/WB pipeline register
+        };
+
+        ForwardSource forward_a_ = ForwardSource::kNone;
+        ForwardSource forward_b_ = ForwardSource::kNone;
+
+
+
+        
         IF_ID_Register pipelineFetch();
         ID_EX_Register pipelineDecode(const IF_ID_Register& if_id_reg);
         EX_MEM_Register pipelineExecute(const ID_EX_Register& id_ex_reg);

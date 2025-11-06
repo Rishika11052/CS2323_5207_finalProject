@@ -12,6 +12,7 @@
 #include "globals.h"
 #include "utils.h"
 #include <stdexcept>
+#include <algorithm>
 
 
 // initializes the 5-stage virtual machine
@@ -91,14 +92,29 @@ void RV5SVM::PipelinedStep() {
 
     EX_MEM_Register next_ex_mem_reg = pipelineExecute(id_ex_reg_);
 
-    ID_EX_Register next_id_ex_reg = pipelineDecode(if_id_reg_);
+    // Stall Logic  
 
-    IF_ID_Register next_if_id_reg = pipelineFetch();
+    ID_EX_Register next_id_ex_reg = pipelineDecode(if_id_reg_);    
+
+    IF_ID_Register next_if_id_reg;
+
+    if(id_stall_){
+        // Don't Fetch . Freeze the IF_ID register by using its current value
+        next_if_id_reg = if_id_reg_;
+        // Don't update pc
+        delta.new_pc = program_counter_;
+
+    }else{
+        //No Stall so normal fetch
+        next_if_id_reg = pipelineFetch();
+        //Update PC
+        // this stores what the pc's value will be at the end of the current clock cycle
+        delta.new_pc = next_if_id_reg.pc_plus_4;
+
+    }   
 
     delta.wb_write = WBInfo;
-    delta.mem_write = mem_info;
-
-    delta.new_pc = next_if_id_reg.pc_plus_4;
+    delta.mem_write = mem_info;    
 
     if_id_reg_ = next_if_id_reg;
     id_ex_reg_ = next_id_ex_reg;
@@ -110,13 +126,19 @@ void RV5SVM::PipelinedStep() {
     delta.new_if_id_reg = next_if_id_reg;
     delta.new_mem_wb_reg = next_mem_wb_reg;
 
-    program_counter_ = next_if_id_reg.pc_plus_4;
+    //update pc if not stalling
+    if(!id_stall_){
+        program_counter_ = next_if_id_reg.pc_plus_4;        
+    }
 
     if (delta.instruction_retired) {
         instructions_retired_++;
     }
-
+    // Push the new cycle's delta onto the undo stack.
     undo_stack_.push(delta);
+    // By executing a new step (PipelinedStep), we are creating a new,
+    // divergent state history. The old "future" (the redo stack) is
+    // now invalid and must be cleared to maintain a single, coherent timeline.
     while (!redo_stack_.empty()) {
         redo_stack_.pop();
     }
@@ -162,6 +184,9 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
     if (!if_id_reg.valid) {
     
+        // if it was set true by a previous cycle which is now invalid
+        id_stall_ = false;
+    
         result.valid = false;
         result.RegWrite = false;
         result.MemRead = false;
@@ -182,6 +207,54 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     uint8_t rs2 = (instruction >> 20) & 0b11111;
     uint8_t funct7 = (instruction >> 25) & 0b1111111;
 
+    //Hazard Detection
+    if(vm_config::config.isHazardDetectionEnabled()){
+
+        //check if the instruction in EX stage is valid, if its a load instruction, if its not x0 and if rd = rs1 or rs2 of current instruction
+        bool isLoadUseHazard = id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1 || id_ex_reg_.rd == rs2);
+        if(isLoadUseHazard){
+            //stall so set flag to true
+            id_stall_ = true;
+            //return a bubble
+            return ID_EX_Register();
+    
+        }
+    }
+
+    //no hazard or hazard detection is disabled
+    id_stall_ = false;
+
+    //Data Forwarding
+    //default set to no forwarding
+    forward_a_ = ForwardSource::kNone;
+    forward_b_ = ForwardSource::kNone;
+
+    //check if forwarding is enabled
+    // if(vm_config::config.isForwardingEnabled()){
+        
+    //     // --- Check for hazards from EX/MEM stage ---
+    //     // (This is the most recent data, so it gets priority)
+    //     if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
+    //         if (ex_mem_reg_.rd == rs1) {
+    //             forward_a_ = ForwardSource::kFromExMem;
+    //         }
+    //         if (ex_mem_reg_.rd == rs2) {
+    //             forward_b_ = ForwardSource::kFromExMem;
+    //         }
+    //     }
+
+    //     // --- Check for hazards from MEM/WB stage ---
+    //     // (Only use this if we didn't already find a newer value from EX/MEM)
+    //     if (mem_wb_reg_.valid && mem_wb_reg_.RegWrite && mem_wb_reg_.rd != 0) {
+    //         if (forward_a_ == ForwardSource::kNone && mem_wb_reg_.rd == rs1) {
+    //             forward_a_ = ForwardSource::kFromMemWb;
+    //         }
+    //         if (forward_b_ == ForwardSource::kNone && mem_wb_reg_.rd == rs2) {
+    //             forward_b_ = ForwardSource::kFromMemWb;
+    //         }
+    //     }
+        
+    // }
     result.immediate = ImmGenerator(instruction);
 
     try {
@@ -460,29 +533,62 @@ void RV5SVM::Step() {
 }
 
 void RV5SVM::DebugRun() {
-    std::cout << "VM_ERROR: DebugRun() is not supported in multi_stage mode." << std::endl;
-    output_status_ = "VM_ERROR";
-    RequestStop();
+
+    ClearStop();
+    output_status_ = "VM_DEBUG_RUN_STARTED";
+    
+    // Main debug run loop
+    // This condition is the same as Run(), it stops when the pipeline is empty.
+    while(!stop_requested_ && (program_counter_ < program_size_ || if_id_reg_.valid || id_ex_reg_.valid || ex_mem_reg_.valid || mem_wb_reg_.valid)) {
+        
+        // PipelinedStep() automatically saves the undo/redo history
+        PipelinedStep(); 
+
+        // --- Breakpoint Check ---
+        // This is the only part that's different from Run()
+        // We assume 'breakpoints_' is a std::set<uint64_t> inherited from VmBase
+        if (std::find(breakpoints_.begin(), breakpoints_.end(), program_counter_) != breakpoints_.end()) {
+            std::cout << "VM_BREAKPOINT_HIT: 0x" << std::hex << program_counter_ << std::dec << std::endl;
+            output_status_ = "VM_BREAKPOINT_HIT";
+            RequestStop(); // Stop the run loop
+        }
+        // --- End of Breakpoint Check ---
+    }
+
+    if (program_counter_ >= program_size_ && !if_id_reg_.valid && !id_ex_reg_.valid && !ex_mem_reg_.valid && !mem_wb_reg_.valid) {
+        std::cout << "VM_PROGRAM_END" << std::endl;
+        output_status_ = "VM_PROGRAM_END";
+    }
+
+    DumpState(globals::vm_state_dump_file_path);
+    DumpRegisters(globals::registers_dump_file_path, registers_);
+
 }
 
 void RV5SVM::Undo() {
     
+    // If stack is empty then nothing is left to undo
     if (undo_stack_.empty()) {
         std::cout << "VM_NO_MORE_UNDO" << std::endl;
         output_status_ = "VM_NO_MORE_UNDO";
         return;
     }
-
+    
+    // snapshot of everything in the last cycle then pops it from the stack
     CycleDelta last = undo_stack_.top();
     undo_stack_.pop();
 
+    //restores pc to old pc
     program_counter_ = last.old_pc;
 
+    //restores the state of all pipeline registers to the state before the last cycle started
     if_id_reg_  = last.old_if_id_reg;
     id_ex_reg_  = last.old_id_ex_reg;
     ex_mem_reg_ = last.old_ex_mem_reg;
     mem_wb_reg_ = last.old_mem_wb_reg;
 
+    //checks if the last cycle resulted in a register write
+    //if true then restores the register value to the value that it stored before the cycle
     if (last.wb_write.occurred) {
         
         switch(last.wb_write.reg_type) {
@@ -496,17 +602,21 @@ void RV5SVM::Undo() {
 
     }
 
+
+    // checks if the last cycle resulted in mem write
+    //reverse that change
     if (last.mem_write.occurred) {
         for (size_t i = 0; i < last.mem_write.old_bytes.size(); ++i) {
             memory_controller_.WriteByte(last.mem_write.address + i, last.mem_write.old_bytes[i]);
         }
     }
 
+    //decrements the clock_cycle
     cycle_s_--;
     if (last.instruction_retired && instructions_retired_ > 0) {
         instructions_retired_--;
     }
-
+    // pushes the snapshot to the redo stack
     redo_stack_.push(last);
 
     std::cout << "VM_UNDO_COMPLETED" << std::endl;
@@ -516,23 +626,31 @@ void RV5SVM::Undo() {
 
 }
 
+
 void RV5SVM::Redo() {
 
+    // If stack is empty nothing to redo so
     if (redo_stack_.empty()) {
         std::cout << "VM_NO_MORE_REDO" << std::endl;
         output_status_ = "VM_NO_MORE_REDO";
         return;
     }
 
+    // snapshot of the cycle that just got undoed(meanig you want to redo this cycle)
     CycleDelta next = redo_stack_.top();
+    // pop it
     redo_stack_.pop();
-
+    //update the pc
     program_counter_ = next.new_pc;
 
+    //update the states of the pipeline registers
     if_id_reg_  = next.new_if_id_reg;
     id_ex_reg_  = next.new_id_ex_reg;
     ex_mem_reg_ = next.new_ex_mem_reg;
     mem_wb_reg_ = next.new_mem_wb_reg;
+    
+    // check if a register write occurred in this cycle
+    // if it did then update the value of the register with the new value
     
     if (next.wb_write.occurred) {
         
@@ -546,18 +664,19 @@ void RV5SVM::Redo() {
         }
 
     }
-
+    //if mem write occured then update the memory 
     if (next.mem_write.occurred) {
         for (size_t i = 0; i < next.mem_write.new_bytes.size(); ++i) {
             memory_controller_.WriteByte(next.mem_write.address + i, next.mem_write.new_bytes[i]);
         }
     }
-
+    //update the cycle count
     cycle_s_++;
     if (next.instruction_retired) {
         instructions_retired_++;
     }
 
+    // push it onto the undo stack
     undo_stack_.push(next);
 
     std::cout << "VM_REDO_COMPLETED" << std::endl;

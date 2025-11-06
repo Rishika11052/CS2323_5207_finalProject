@@ -44,9 +44,12 @@ namespace vm_config
             }
             else if (key == "hazard_detection") {
                 // Do nothing for now
+                setHazardDetectionEnabled(value == "true");
             } else if (key == "forwarding") {
+                setForwardingEnabled(value == "true");
                 // Do nothing for now
             } else if (key == "branch_prediction") {
+                setBranchPredictionType(value);
                 // Do nothing for now
             // --- END ADD ---
     
@@ -249,9 +252,9 @@ namespace vm_config
         config_file << "[Execution]\n";
         config_file << "run_step_delay=" << getRunStepDelay() << "   ; in ms\n";
         config_file << "processor_type=" << getVmTypeString() << "\n";
-        config_file << "hazard_detection=false\n";
-        config_file << "forwarding=false\n";
-        config_file << "branch_prediction=none\n";
+        config_file << "hazard_detection=" << (isHazardDetectionEnabled() ? "true" : "false") << "\n";
+        config_file << "forwarding=" << (isForwardingEnabled() ? "true" : "false") << "\n";
+        config_file << "branch_prediction=" << getBranchPredictionType() << "\n";
         config_file << "instruction_execution_limit=" << instruction_execution_limit << "\n\n";
 
         config_file << "[Memory]\n";
