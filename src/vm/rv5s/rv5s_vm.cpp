@@ -47,7 +47,18 @@ void RV5SVM::Reset() {
     ex_mem_reg_ = EX_MEM_Register();
     mem_wb_reg_ = MEM_WB_Register();
 
+    //Reset undo redo stacks
+    while (!undo_stack_.empty()) {
+        undo_stack_.pop();
+    }
+    while (!redo_stack_.empty()) {
+        redo_stack_.pop();
+    }    
+
     control_unit_.Reset();
+
+    DumpState(globals::vm_state_dump_file_path);
+    DumpRegisters(globals::registers_dump_file_path, registers_);
 
     std::cout << "RV5SVM has been reset." << std::endl;
 
@@ -61,9 +72,22 @@ void RV5SVM::Reset() {
 // but here since you're  updating the main register in the end everything is updated simultaneously.
 void RV5SVM::PipelinedStep() {
 
-    pipelineWriteBack(mem_wb_reg_);
+    CycleDelta delta;
+    delta.old_pc = program_counter_;
+    delta.old_if_id_reg = if_id_reg_;
+    delta.old_id_ex_reg = id_ex_reg_;
+    delta.old_ex_mem_reg = ex_mem_reg_;
+    delta.old_mem_wb_reg = mem_wb_reg_;
+    delta.instruction_retired = false;
 
-    MEM_WB_Register next_mem_wb_reg = pipelineMemory(ex_mem_reg_);
+    WbWriteInfo WBInfo = pipelineWriteBack(mem_wb_reg_);
+    if (mem_wb_reg_.valid) {
+        delta.instruction_retired = true;
+    }
+
+    std::pair<MEM_WB_Register, MemWriteInfo> MemInfo = pipelineMemory(ex_mem_reg_);
+    MEM_WB_Register next_mem_wb_reg = MemInfo.first;
+    MemWriteInfo mem_info = MemInfo.second;
 
     EX_MEM_Register next_ex_mem_reg = pipelineExecute(id_ex_reg_);
 
@@ -71,12 +95,31 @@ void RV5SVM::PipelinedStep() {
 
     IF_ID_Register next_if_id_reg = pipelineFetch();
 
+    delta.wb_write = WBInfo;
+    delta.mem_write = mem_info;
+
+    delta.new_pc = next_if_id_reg.pc_plus_4;
+
     if_id_reg_ = next_if_id_reg;
     id_ex_reg_ = next_id_ex_reg;
     ex_mem_reg_ = next_ex_mem_reg;
     mem_wb_reg_ = next_mem_wb_reg;
 
+    delta.new_ex_mem_reg = next_ex_mem_reg;
+    delta.new_id_ex_reg = next_id_ex_reg;
+    delta.new_if_id_reg = next_if_id_reg;
+    delta.new_mem_wb_reg = next_mem_wb_reg;
+
     program_counter_ = next_if_id_reg.pc_plus_4;
+
+    if (delta.instruction_retired) {
+        instructions_retired_++;
+    }
+
+    undo_stack_.push(delta);
+    while (!redo_stack_.empty()) {
+        redo_stack_.pop();
+    }
 
     cycle_s_++;
 
@@ -223,9 +266,11 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
 
 }
 
-MEM_WB_Register RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
+std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
     
     MEM_WB_Register result;
+    MemWriteInfo writeInfo;
+    writeInfo.occurred = false;
 
     result.valid = ex_mem_reg.valid;
     result.RegWrite = ex_mem_reg.RegWrite;
@@ -234,7 +279,7 @@ MEM_WB_Register RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
     result.alu_result = ex_mem_reg.alu_result;
 
     if (!ex_mem_reg.valid) {
-        return result;
+        return {result, writeInfo};
     }
 
     uint64_t memoryAddress = ex_mem_reg.alu_result;
@@ -271,12 +316,30 @@ MEM_WB_Register RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
             result.valid = false;
             result.RegWrite = false;
             result.MemToReg = false;
-            return result;
+            return {result, writeInfo};
         }
     }
 
     if (ex_mem_reg.MemWrite) {
+        writeInfo.occurred = true;
+        writeInfo.address = memoryAddress;
+
+        size_t writeSize = 0;
+
+        switch (ex_mem_reg.funct3) {
+            case 0b000: writeSize = 1; break; // SB
+            case 0b001: writeSize = 2; break; // SH
+            case 0b010: writeSize = 4; break; // SW
+            case 0b011: writeSize = 8; break; // SD
+            default:
+                throw std::runtime_error("Invalid funct3 for store instruction");
+        }
+
         try {
+            writeInfo.old_bytes.resize(writeSize);
+            for (size_t i = 0; i < writeSize; ++i) {
+                writeInfo.old_bytes[i] = memory_controller_.ReadByte(memoryAddress + i);
+            }
             switch (ex_mem_reg.funct3) {
                 case 0b000: // SB
                     memory_controller_.WriteByte(memoryAddress, static_cast<uint8_t>(ex_mem_reg.reg2_value & 0xFF));
@@ -293,23 +356,33 @@ MEM_WB_Register RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
                 default:
                     throw std::runtime_error("Invalid funct3 for store instruction");
             }
+
+            writeInfo.new_bytes.resize(writeSize);
+            for (size_t i = 0; i < writeSize; ++i) {
+                writeInfo.new_bytes[i] = memory_controller_.ReadByte(memoryAddress + i);
+            }
+
         } catch (const std::out_of_range& e) {
             std::cerr << "Runtime Error: Memory write failed at address 0x" << std::hex << memoryAddress << " - " << e.what() << std::dec << std::endl;
             result.valid = false;
             result.RegWrite = false;
             result.MemToReg = false;
-            return result;
+            writeInfo.occurred = false;
+            return {result, writeInfo};
         }
     }
 
-    return result;
+    return {result, writeInfo};
 
 }
 
-void RV5SVM::pipelineWriteBack(const MEM_WB_Register& mem_wb_reg) {
+WbWriteInfo RV5SVM::pipelineWriteBack(const MEM_WB_Register& mem_wb_reg) {
     
+    WbWriteInfo WBInfo;
+    WBInfo.occurred = false;
+
     if (!mem_wb_reg.valid) {
-        return;
+        return WBInfo;
     }
 
     if (mem_wb_reg.RegWrite) {
@@ -323,16 +396,24 @@ void RV5SVM::pipelineWriteBack(const MEM_WB_Register& mem_wb_reg) {
         }
 
         uint8_t destinationRegister = mem_wb_reg.rd;
-        try {
-            registers_.WriteGpr(destinationRegister, writeValue);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Runtime Error: WriteBack failed writing to GPR x" << static_cast<int>(destinationRegister) << " - " << e.what() << std::endl;
-            return;
+        if (destinationRegister != 0) {
+            try {
+                WBInfo.reg_type = 0;
+                WBInfo.reg_index = destinationRegister;
+                WBInfo.old_value = registers_.ReadGpr(destinationRegister);
+                registers_.WriteGpr(destinationRegister, writeValue);
+                WBInfo.new_value = writeValue;
+                WBInfo.occurred = true;
+            } catch (const std::out_of_range& e) {
+                std::cerr << "Runtime Error: WriteBack failed writing to GPR x" << static_cast<int>(destinationRegister) << " - " << e.what() << std::endl;
+                WBInfo.occurred = false;
+                return WBInfo;
+            }            
         }
 
     }
 
-    instructions_retired_++;
+    return WBInfo;
 
 }
 
@@ -385,11 +466,103 @@ void RV5SVM::DebugRun() {
 }
 
 void RV5SVM::Undo() {
-    std::cout << "VM_ERROR: Undo() is not yet implemented for multi_stage mode." << std::endl;
-    output_status_ = "VM_ERROR";
+    
+    if (undo_stack_.empty()) {
+        std::cout << "VM_NO_MORE_UNDO" << std::endl;
+        output_status_ = "VM_NO_MORE_UNDO";
+        return;
+    }
+
+    CycleDelta last = undo_stack_.top();
+    undo_stack_.pop();
+
+    program_counter_ = last.old_pc;
+
+    if_id_reg_  = last.old_if_id_reg;
+    id_ex_reg_  = last.old_id_ex_reg;
+    ex_mem_reg_ = last.old_ex_mem_reg;
+    mem_wb_reg_ = last.old_mem_wb_reg;
+
+    if (last.wb_write.occurred) {
+        
+        switch(last.wb_write.reg_type) {
+            case 0: // GPR
+                registers_.WriteGpr(last.wb_write.reg_index, last.wb_write.old_value);
+                break;
+            default:
+                std::cerr << "Runtime Error: Invalid register type in Undo WB writeback." << std::endl;
+                break;
+        }
+
+    }
+
+    if (last.mem_write.occurred) {
+        for (size_t i = 0; i < last.mem_write.old_bytes.size(); ++i) {
+            memory_controller_.WriteByte(last.mem_write.address + i, last.mem_write.old_bytes[i]);
+        }
+    }
+
+    cycle_s_--;
+    if (last.instruction_retired && instructions_retired_ > 0) {
+        instructions_retired_--;
+    }
+
+    redo_stack_.push(last);
+
+    std::cout << "VM_UNDO_COMPLETED" << std::endl;
+    output_status_ = "VM_UNDO_COMPLETED";
+    DumpState(globals::vm_state_dump_file_path);
+    DumpRegisters(globals::registers_dump_file_path, registers_);
+
 }
 
 void RV5SVM::Redo() {
-    std::cout << "VM_ERROR: Redo() is not yet implemented for multi_stage mode." << std::endl;
-    output_status_ = "VM_ERROR";
+
+    if (redo_stack_.empty()) {
+        std::cout << "VM_NO_MORE_REDO" << std::endl;
+        output_status_ = "VM_NO_MORE_REDO";
+        return;
+    }
+
+    CycleDelta next = redo_stack_.top();
+    redo_stack_.pop();
+
+    program_counter_ = next.new_pc;
+
+    if_id_reg_  = next.new_if_id_reg;
+    id_ex_reg_  = next.new_id_ex_reg;
+    ex_mem_reg_ = next.new_ex_mem_reg;
+    mem_wb_reg_ = next.new_mem_wb_reg;
+    
+    if (next.wb_write.occurred) {
+        
+        switch(next.wb_write.reg_type) {
+            case 0: // GPR
+                registers_.WriteGpr(next.wb_write.reg_index, next.wb_write.new_value);
+                break;
+            default:
+                std::cerr << "Runtime Error: Invalid register type in Redo WB writeback." << std::endl;
+                break;
+        }
+
+    }
+
+    if (next.mem_write.occurred) {
+        for (size_t i = 0; i < next.mem_write.new_bytes.size(); ++i) {
+            memory_controller_.WriteByte(next.mem_write.address + i, next.mem_write.new_bytes[i]);
+        }
+    }
+
+    cycle_s_++;
+    if (next.instruction_retired) {
+        instructions_retired_++;
+    }
+
+    undo_stack_.push(next);
+
+    std::cout << "VM_REDO_COMPLETED" << std::endl;
+    output_status_ = "VM_REDO_COMPLETED";
+    DumpState(globals::vm_state_dump_file_path);
+    DumpRegisters(globals::registers_dump_file_path, registers_);
+
 }

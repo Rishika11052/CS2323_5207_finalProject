@@ -10,5 +10,5 @@
     "stall_cycles": 0,
     "branch_mispredictions": 0,
     "breakpoints": [],
-    "output_status": "VM_REDO_COMPLETED"
+    "output_status": "VM_PROGRAM_END"
 }
