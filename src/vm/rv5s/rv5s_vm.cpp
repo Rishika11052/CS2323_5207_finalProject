@@ -11,9 +11,10 @@
 #include "config.h"
 #include "globals.h"
 #include "utils.h"
-
 #include <stdexcept>
 
+
+// initializes the 5-stage virtual machine
 RV5SVM::RV5SVM() : VmBase() {
 
     Reset();
@@ -27,8 +28,12 @@ RV5SVM::RV5SVM() : VmBase() {
 
 }
 
+// ~ means destructor ; is called whenever an object of some class is destroyed; default means call the default version of the destructor
+//meaning destroy al member variables in normal way like no added stuff
 RV5SVM::~RV5SVM() = default;
 
+
+// VM is in clean/default state ; all registers are cleared and stuff
 void RV5SVM::Reset() {
 
     program_counter_ = 0;
@@ -48,6 +53,12 @@ void RV5SVM::Reset() {
 
 }
 
+//calls all the pipeline stages in reverse order
+// why?  the next state of each stage is based on the state of the pipeline at the beginning of each clock cycle
+// in real hardware , all pipeline registers update at the exact same time(when the signal changes from 0 to 1)
+//In C++ only one line runs at a time
+//If you run it in the right order , everything will happen one after th eother like in a single cycle
+// but here since you're  updating the main register in the end everything is updated simultaneously.
 void RV5SVM::PipelinedStep() {
 
     pipelineWriteBack(mem_wb_reg_);
