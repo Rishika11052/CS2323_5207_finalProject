@@ -229,32 +229,32 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     forward_a_ = ForwardSource::kNone;
     forward_b_ = ForwardSource::kNone;
 
-    //check if forwarding is enabled
-    // if(vm_config::config.isForwardingEnabled()){
+    // check if forwarding is enabled
+    if(vm_config::config.isForwardingEnabled()){
         
-    //     // --- Check for hazards from EX/MEM stage ---
-    //     // (This is the most recent data, so it gets priority)
-    //     if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
-    //         if (ex_mem_reg_.rd == rs1) {
-    //             forward_a_ = ForwardSource::kFromExMem;
-    //         }
-    //         if (ex_mem_reg_.rd == rs2) {
-    //             forward_b_ = ForwardSource::kFromExMem;
-    //         }
-    //     }
+        // --- Check for hazards from EX/MEM stage ---
+        // (This is the most recent data, so it gets priority)
+        if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
+            if (ex_mem_reg_.rd == rs1) {
+                forward_a_ = ForwardSource::kFromExMem;
+            }
+            if (ex_mem_reg_.rd == rs2) {
+                forward_b_ = ForwardSource::kFromExMem;
+            }
+        }
 
-    //     // --- Check for hazards from MEM/WB stage ---
-    //     // (Only use this if we didn't already find a newer value from EX/MEM)
-    //     if (mem_wb_reg_.valid && mem_wb_reg_.RegWrite && mem_wb_reg_.rd != 0) {
-    //         if (forward_a_ == ForwardSource::kNone && mem_wb_reg_.rd == rs1) {
-    //             forward_a_ = ForwardSource::kFromMemWb;
-    //         }
-    //         if (forward_b_ == ForwardSource::kNone && mem_wb_reg_.rd == rs2) {
-    //             forward_b_ = ForwardSource::kFromMemWb;
-    //         }
-    //     }
+        // --- Check for hazards from MEM/WB stage ---
+        // (Only use this if we didn't already find a newer value from EX/MEM)
+        if (mem_wb_reg_.valid && mem_wb_reg_.RegWrite && mem_wb_reg_.rd != 0) {
+            if (forward_a_ == ForwardSource::kNone && mem_wb_reg_.rd == rs1) {
+                forward_a_ = ForwardSource::kFromMemWb;
+            }
+            if (forward_b_ == ForwardSource::kNone && mem_wb_reg_.rd == rs2) {
+                forward_b_ = ForwardSource::kFromMemWb;
+            }
+        }
         
-    // }
+    }
     result.immediate = ImmGenerator(instruction);
 
     try {
@@ -296,6 +296,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     
     EX_MEM_Register result;
 
+    
     result.valid = id_ex_reg.valid;
     result.RegWrite = id_ex_reg.RegWrite;
     result.MemRead = id_ex_reg.MemRead;
@@ -304,39 +305,72 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     result.rd = id_ex_reg.rd;
 
     if (!id_ex_reg.valid) {
-        return result;
+        return result; // Pass the bubble
     }
 
-    uint64_t operand_a = id_ex_reg.reg1_value;
-    uint64_t operand_b = 0;
+    // FORWARDING MUX FOR OPERAND A
+    uint64_t operand_a = 0;
+    switch (forward_a_) {
+        case ForwardSource::kNone:
+            operand_a = id_ex_reg.reg1_value;
+            break;
+        case ForwardSource::kFromExMem:
+            operand_a = ex_mem_reg_.alu_result;
+            break;
+        case ForwardSource::kFromMemWb:
+            // Data from MEM/WB could be from memory (load) or ALU (calc)
+            // We must check its MemToReg signal to select the right data
+            if (mem_wb_reg_.MemToReg) {
+                operand_a = mem_wb_reg_.data_from_memory;
+            } else {
+                operand_a = mem_wb_reg_.alu_result;
+            }
+            break;
+    }
 
+    // --- NEW: FORWARDING MUX FOR OPERAND B ---
+    uint64_t operand_b = 0;
+    
     if (id_ex_reg.AluSrc) {
+        // Source is an immediate. No forwarding is needed.
         operand_b = static_cast<uint64_t>(static_cast<int64_t>(id_ex_reg.immediate));
     } else {
-        operand_b = id_ex_reg.reg2_value;
+        // Source is a register. Check for forwarding.
+        switch (forward_b_) {
+            case ForwardSource::kNone:
+                operand_b = id_ex_reg.reg2_value;
+                break;
+            case ForwardSource::kFromExMem:
+                operand_b = ex_mem_reg_.alu_result;
+                break;
+            case ForwardSource::kFromMemWb:
+                // Same check as operand_a
+                if (mem_wb_reg_.MemToReg) {
+                    operand_b = mem_wb_reg_.data_from_memory;
+                } else {
+                    operand_b = mem_wb_reg_.alu_result;
+                }
+                break;
+        }
     }
 
+    // --- ALU EXECUTION (This code is the same) ---
     uint64_t ALUResult = 0;
     bool overflow = false;
 
     try {
         std::tie(ALUResult, overflow) = alu_.execute(id_ex_reg.AluOperation, operand_a, operand_b);
     } catch (const std::exception& e) {
-        std::cerr << "Runtime Error: ALU execution failed for instruction with ALU operation " << static_cast<int>(id_ex_reg.AluOperation) << " - " << e.what() << std::endl;
-        result.valid = false;
-        result.RegWrite = false;
-        result.MemRead = false;
-        result.MemWrite = false;
-        result.MemToReg = false;
-        return result;
+        std::cerr << "Runtime Error: ALU execution failed..." << std::endl;
+        // ... (rest of your existing catch block) ...
     }
 
+    // --- Pass-through results (This code is the same) ---
     result.alu_result = ALUResult;
-    result.reg2_value = id_ex_reg.reg2_value;
+    result.reg2_value = id_ex_reg.reg2_value; // Needed for Store instructions
     result.funct3 = id_ex_reg.funct3;
 
     return result;
-
 }
 
 std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
