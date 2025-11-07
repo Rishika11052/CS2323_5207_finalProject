@@ -296,7 +296,6 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     
     EX_MEM_Register result;
 
-    
     result.valid = id_ex_reg.valid;
     result.RegWrite = id_ex_reg.RegWrite;
     result.MemRead = id_ex_reg.MemRead;
@@ -305,22 +304,21 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     result.rd = id_ex_reg.rd;
 
     if (!id_ex_reg.valid) {
-        return result; // Pass the bubble
+        return result; // Pass the Bubble
     }
 
-    // FORWARDING MUX FOR OPERAND A
+    // uint64_t operand_a = id_ex_reg.reg1_value;
+    // uint64_t operand_b = 0;
+
+    // forwarding mux for operand a
     uint64_t operand_a = 0;
-    switch (forward_a_) {
-        case ForwardSource::kNone:
-            operand_a = id_ex_reg.reg1_value;
+    switch(forward_a_){
+        case ForwardSource::kNone : operand_a = id_ex_reg.reg1_value;
             break;
-        case ForwardSource::kFromExMem:
-            operand_a = ex_mem_reg_.alu_result;
+        case ForwardSource::kFromExMem : operand_a = ex_mem_reg_.alu_result;
             break;
-        case ForwardSource::kFromMemWb:
-            // Data from MEM/WB could be from memory (load) or ALU (calc)
-            // We must check its MemToReg signal to select the right data
-            if (mem_wb_reg_.MemToReg) {
+        case ForwardSource::kFromMemWb :
+            if (mem_wb_reg_.MemToReg){
                 operand_a = mem_wb_reg_.data_from_memory;
             } else {
                 operand_a = mem_wb_reg_.alu_result;
@@ -328,49 +326,48 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
             break;
     }
 
-    // --- NEW: FORWARDING MUX FOR OPERAND B ---
+    //forwarding mux for operand b
     uint64_t operand_b = 0;
-    
+
     if (id_ex_reg.AluSrc) {
-        // Source is an immediate. No forwarding is needed.
         operand_b = static_cast<uint64_t>(static_cast<int64_t>(id_ex_reg.immediate));
     } else {
-        // Source is a register. Check for forwarding.
-        switch (forward_b_) {
-            case ForwardSource::kNone:
-                operand_b = id_ex_reg.reg2_value;
+        switch(forward_b_) {
+            case ForwardSource::kNone : operand_b = id_ex_reg.reg2_value;
                 break;
-            case ForwardSource::kFromExMem:
-                operand_b = ex_mem_reg_.alu_result;
+            case ForwardSource::kFromExMem: operand_b = ex_mem_reg_.alu_result;
                 break;
-            case ForwardSource::kFromMemWb:
-                // Same check as operand_a
-                if (mem_wb_reg_.MemToReg) {
+            case ForwardSource::kFromMemWb: 
+                if(mem_wb_reg_.MemToReg){
                     operand_b = mem_wb_reg_.data_from_memory;
-                } else {
+                }else{
                     operand_b = mem_wb_reg_.alu_result;
                 }
                 break;
         }
     }
 
-    // --- ALU EXECUTION (This code is the same) ---
     uint64_t ALUResult = 0;
     bool overflow = false;
 
     try {
         std::tie(ALUResult, overflow) = alu_.execute(id_ex_reg.AluOperation, operand_a, operand_b);
     } catch (const std::exception& e) {
-        std::cerr << "Runtime Error: ALU execution failed..." << std::endl;
-        // ... (rest of your existing catch block) ...
+        std::cerr << "Runtime Error: ALU execution failed for instruction with ALU operation " << static_cast<int>(id_ex_reg.AluOperation) << " - " << e.what() << std::endl;
+        result.valid = false;
+        result.RegWrite = false;
+        result.MemRead = false;
+        result.MemWrite = false;
+        result.MemToReg = false;
+        return result;
     }
 
-    // --- Pass-through results (This code is the same) ---
     result.alu_result = ALUResult;
-    result.reg2_value = id_ex_reg.reg2_value; // Needed for Store instructions
+    result.reg2_value = id_ex_reg.reg2_value;
     result.funct3 = id_ex_reg.funct3;
 
     return result;
+
 }
 
 std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Register& ex_mem_reg) {
