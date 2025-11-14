@@ -68,6 +68,10 @@ class RV5SVM : public VmBase {
 
     private:
 
+        uint64_t num_forwards_ = 0;
+        uint64_t num_flushes_ = 0;
+
+
         // the flag that pipelineDecode will use to tell pipelineStep whether to stall or not
         bool id_stall_ = false;
 

@@ -122,6 +122,7 @@ void RV5SVM::PipelinedStep() {
             next_if_id_reg = pipelineFetch(); // Fetch from the new PC
 
             next_id_ex_reg = ID_EX_Register(); // Flush the instruction in ID/EX stage
+            num_flushes_ ++;
             stall_cycles_++; // Increment stall cycles
 
         } else {
@@ -445,7 +446,9 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     switch(forward_a_){
         case ForwardSource::kNone : operand_a = id_ex_reg.reg1_value;
             break;
-        case ForwardSource::kFromExMem : operand_a = ex_mem_reg_.alu_result;
+        case ForwardSource::kFromExMem : 
+            operand_a = ex_mem_reg_.alu_result;
+            num_forwards_ ++;
             break;
         case ForwardSource::kFromMemWb :
             if (mem_wb_reg_.MemToReg){
@@ -453,6 +456,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
             } else {
                 operand_a = mem_wb_reg_.alu_result;
             }
+            num_forwards_ ++ ;
             break;
     }
 
@@ -736,6 +740,13 @@ void RV5SVM::Run() {
         std::cout << "VM_PROGRAM_END" << std::endl;
         output_status_ = "VM_PROGRAM_END";
     }
+
+    std::cout << "--- Simulation Stats ---" << std::endl;
+    std::cout << "Total Cycles: " << cycle_s_ << std::endl;
+    std::cout << "Instructions Retired: " << instructions_retired_ << std::endl;
+    std::cout << "Stall Cycles: " << stall_cycles_ << std::endl; // You already have this!
+    std::cout << "Forwarding Events: " << num_forwards_ << std::endl;
+    std::cout << "Pipeline Flushes: " << num_flushes_ << std::endl;
 
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
