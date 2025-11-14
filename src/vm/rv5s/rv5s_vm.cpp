@@ -98,7 +98,40 @@ void RV5SVM::PipelinedStep() {
 
     IF_ID_Register next_if_id_reg;
 
-    if(id_stall_){
+    // CONTROL LOGIC FOR HAZARD DUE TO BRANCHES AND JUMPS AND STALLS
+
+    if (PCFromEX_){
+
+        // Misprediction detected (Modes iii, iv, v)
+
+        if (vm_config::config.isHazardDetectionEnabled()) {
+
+            program_counter_ = PCTarget_; // update PC to branch target
+            next_if_id_reg = pipelineFetch(); // Fetch from the new PC
+
+            next_id_ex_reg = ID_EX_Register(); // Flush the instruction in ID/EX stage
+            stall_cycles_++; // Increment stall cycles
+
+        } else {
+
+            // Mode (ii) - No hazard detection, just update PC
+            program_counter_ = PCTarget_; // update PC to branch target
+            next_if_id_reg = pipelineFetch(); // Fetch from the new PC
+
+        }
+
+        delta.new_pc = next_if_id_reg.pc_plus_4; // update PC for Undo/Redo
+        PCFromEX_ = false; // reset the flag
+
+    } else if(IDPredictTaken_) {
+
+        // Predicted Taken (Mode v)
+        // This Code Path is taken when the branch was predicted taken in ID stage and Mode v is active and its not a misprediction
+        program_counter_ = IDBranchTarget_; // update PC to branch target
+        next_if_id_reg = pipelineFetch(); // Fetch from the new PC
+        delta.new_pc = next_if_id_reg.pc_plus_4; // update PC for Undo/Redo
+
+    } else if(id_stall_){
         // Don't Fetch . Freeze the IF_ID register by using its current value
         next_if_id_reg = if_id_reg_;
         // Don't update pc
@@ -127,7 +160,7 @@ void RV5SVM::PipelinedStep() {
     delta.new_mem_wb_reg = next_mem_wb_reg;
 
     //update pc if not stalling
-    if(!id_stall_){
+    if(!PCFromEX_ && !id_stall_ && !IDPredictTaken_){
         program_counter_ = next_if_id_reg.pc_plus_4;        
     }
 
@@ -179,6 +212,9 @@ IF_ID_Register RV5SVM::pipelineFetch() {
 }
 
 ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
+
+    IDPredictTaken_ = false;
+    IDBranchTarget_ = 0;
     
     ID_EX_Register result;
 
@@ -215,10 +251,49 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
         if(isLoadUseHazard){
             //stall so set flag to true
             id_stall_ = true;
+
+            // Increment stall cycles
+            stall_cycles_++;
+
             //return a bubble
             return ID_EX_Register();
     
         }
+
+        if (!vm_config::config.isForwardingEnabled()) {
+
+            // Check for hazards from EX stage (when forwarding is disabled)
+            // If the instruction in EX stage is valid, writes to a register, not x0, and its rd matches rs1 or rs2 of current instruction
+            bool isHazardFromEXStage = id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1 || id_ex_reg_.rd == rs2);
+
+            if (isHazardFromEXStage) {
+                // Stall due to hazard
+                id_stall_ = true;
+
+                // Increment stall cycles
+                stall_cycles_++;
+
+                // Return a bubble
+                return ID_EX_Register();
+            }
+
+            // Check for hazards from MEM stage (when forwarding is disabled)
+            // If the instruction in MEM stage is valid, writes to a register, not x0, and its rd matches rs1 or rs2 of current instruction
+            bool isHazardFromMemStage = ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0 && (ex_mem_reg_.rd == rs1 || ex_mem_reg_.rd == rs2);
+
+            if (isHazardFromMemStage) {
+                // Stall due to hazard
+                id_stall_ = true;
+
+                // Increment stall cycles
+                stall_cycles_++;
+
+                // Return a bubble
+                return ID_EX_Register();
+            }
+
+        }
+
     }
 
     //no hazard or hazard detection is disabled
@@ -233,24 +308,27 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     if(vm_config::config.isForwardingEnabled()){
         
         // --- Check for hazards from EX/MEM stage ---
-        // (This is the most recent data, so it gets priority)
+        // (This data is from 2 cycles ago, so let it be overridden by newer data from ID/EX stage)
         if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
             if (ex_mem_reg_.rd == rs1) {
-                forward_a_ = ForwardSource::kFromExMem;
+                forward_a_ = ForwardSource::kFromMemWb;
             }
             if (ex_mem_reg_.rd == rs2) {
-                forward_b_ = ForwardSource::kFromExMem;
+                forward_b_ = ForwardSource::kFromMemWb;
             }
         }
 
-        // --- Check for hazards from MEM/WB stage ---
-        // (Only use this if we didn't already find a newer value from EX/MEM)
-        if (mem_wb_reg_.valid && mem_wb_reg_.RegWrite && mem_wb_reg_.rd != 0) {
-            if (forward_a_ == ForwardSource::kNone && mem_wb_reg_.rd == rs1) {
-                forward_a_ = ForwardSource::kFromMemWb;
-            }
-            if (forward_b_ == ForwardSource::kNone && mem_wb_reg_.rd == rs2) {
-                forward_b_ = ForwardSource::kFromMemWb;
+        // --- Check for hazards from ID/EX stage ---
+        // (This data is from 1 cycle ago, so it has the highest priority, so let it override previous forwarding decisions)
+        if (id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0) {
+            // Forward from ID/EX only if it's not a load instruction
+            if (!id_ex_reg_.MemRead) { 
+                if (id_ex_reg_.rd == rs1) {
+                    forward_a_ = ForwardSource::kFromExMem;
+                }
+                if (id_ex_reg_.rd == rs2) {
+                    forward_b_ = ForwardSource::kFromExMem;
+                }
             }
         }
         
@@ -273,6 +351,45 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     }
 
     control_unit_.GenerateSignalForInstruction(instruction);
+
+    // Set control signals for branch instructions
+    result.currentPC = if_id_reg.pc_plus_4 - 4; // Current PC is PC + 4 - 4 = PC
+    result.isBranch = control_unit_.GetBranch(); // True for branch instructions
+    result.isJAL = (opcode == 0b1101111); // True for JAL, False for JALR
+    result.isJump = (result.isJAL || opcode == 0b1100111); // JAL or JALR
+    result.predictedTaken = false; // Default to not taken
+
+    if (vm_config::config.getBranchPredictionType() == vm_config::BranchPredictionType::STATIC) {
+        // Static Branch Prediction: Predict branches as taken
+        if (result.isJAL) {
+            IDPredictTaken_ = true; // JAL is always predicted taken
+            IDBranchTarget_ = result.currentPC + static_cast<int64_t>(result.immediate);
+            result.predictedTaken = true;
+        } else if (result.isBranch && static_cast<int64_t>(result.immediate) < 0) {
+            // Backward branches are predicted taken
+            result.predictedTaken = true;
+            IDPredictTaken_ = true;
+            IDBranchTarget_ = result.currentPC + static_cast<int64_t>(result.immediate);
+        }
+    } else if (vm_config::config.getBranchPredictionType() == vm_config::BranchPredictionType::DYNAMIC1BIT) {
+
+        if (result.isJAL) {
+            // JAL is always predicted taken
+            IDPredictTaken_ = true;
+            IDBranchTarget_ = result.currentPC + static_cast<int64_t>(result.immediate);
+            result.predictedTaken = true;
+        } else if (result.isBranch) {
+            // Check the Branch History Table for prediction
+            if (branch_history_table_.count(result.currentPC) && branch_history_table_[result.currentPC] == true) {
+                // Predicted taken
+                result.predictedTaken = true;
+                IDPredictTaken_ = true;
+                IDBranchTarget_ = result.currentPC + static_cast<int64_t>(result.immediate);
+            }
+        }
+
+    }
+
     result.RegWrite = control_unit_.GetRegWrite();
     result.MemRead = control_unit_.GetMemRead();
     result.MemWrite = control_unit_.GetMemWrite();
@@ -293,7 +410,10 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 }
 
 EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
-    
+
+    PCFromEX_ = false; // Reset control hazard signal
+    PCTarget_ = 0; // Reset PC target
+
     EX_MEM_Register result;
 
     result.valid = id_ex_reg.valid;
@@ -306,9 +426,6 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     if (!id_ex_reg.valid) {
         return result; // Pass the Bubble
     }
-
-    // uint64_t operand_a = id_ex_reg.reg1_value;
-    // uint64_t operand_b = 0;
 
     // forwarding mux for operand a
     uint64_t operand_a = 0;
@@ -360,6 +477,68 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
         result.MemWrite = false;
         result.MemToReg = false;
         return result;
+    }
+
+    // Branch Handling
+
+    if (id_ex_reg.isJump) {
+
+        // Jumps ( JAL and JALR ) Always taken
+        PCFromEX_ = true;
+
+        if (id_ex_reg.isJAL) {
+            // JAL
+            PCTarget_ = id_ex_reg.currentPC + static_cast<int64_t>(id_ex_reg.immediate);
+        } else {
+            // JALR
+            PCTarget_ = (operand_a + static_cast<int64_t>(id_ex_reg.immediate)) & ~1ULL; // Ensure LSB is 0
+        }
+
+    } else if (id_ex_reg.isBranch) {
+
+        bool branchTaken = false; // Determine if branch is taken based on funct3
+
+        switch (id_ex_reg.funct3) {
+            case 0b000: // BEQ
+                branchTaken = (ALUResult == 0);
+                break;
+            case 0b001: // BNE
+                branchTaken = (ALUResult != 0);
+                break;
+            case 0b100: // BLT
+                branchTaken = (ALUResult == 1);
+                break;
+            case 0b101: // BGE
+                branchTaken = (ALUResult == 0);
+                break;
+            case 0b110: // BLTU
+                branchTaken = (ALUResult == 1);
+                break;
+            case 0b111: // BGEU
+                branchTaken = (ALUResult == 0);
+                break;
+            default:
+                throw std::runtime_error("Invalid funct3 for branch instruction");
+        }
+
+        if (branchTaken != id_ex_reg.predictedTaken) {
+
+            // Misprediction
+            PCFromEX_ = true;
+
+            if (branchTaken) {
+                PCTarget_ = id_ex_reg.currentPC + static_cast<int64_t>(id_ex_reg.immediate);
+            } else {
+                PCTarget_ = id_ex_reg.currentPC + 4;
+            }
+
+        }
+
+        if (vm_config::config.getBranchPredictionType() == vm_config::BranchPredictionType::DYNAMIC1BIT) {
+            // Update Branch History Table
+            branch_history_table_[id_ex_reg.currentPC] = branchTaken;
+        }
+
     }
 
     result.alu_result = ALUResult;

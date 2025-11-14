@@ -49,9 +49,19 @@ namespace vm_config
                 setForwardingEnabled(value == "true");
                 // Do nothing for now
             } else if (key == "branch_prediction") {
-                setBranchPredictionType(value);
-                // Do nothing for now
-            // --- END ADD ---
+                
+                if (value == "none") {
+                    branch_prediction_type = BranchPredictionType::NONE;
+                } else if (value == "static") {
+                    branch_prediction_type = BranchPredictionType::STATIC;
+                } else if (value == "dynamic_1bit") {
+                    branch_prediction_type = BranchPredictionType::DYNAMIC1BIT;
+                } else if (value == "dynamic_2bit") {
+                    branch_prediction_type = BranchPredictionType::DYNAMIC2BIT;
+                } else {
+                    std::cerr << "Unknown branch prediction type: '" << value << "'. Defaulting to 'none'." << std::endl;
+                    branch_prediction_type = BranchPredictionType::NONE;
+                }
     
             }
 
@@ -147,9 +157,20 @@ namespace vm_config
         } else if (section == "Cache") {
             // Do nothing for now
         } else if (section == "BranchPrediction") {
-            // Do nothing for now
-        // --- END ADD ---
-    
+            if (key == "branch_prediction_type") {
+                if (value == "none") {
+                    setBranchPredictionType(BranchPredictionType::NONE);
+                } else if (value == "static") {
+                    setBranchPredictionType(BranchPredictionType::STATIC);
+                } else if (value == "dynamic_1bit") {
+                    setBranchPredictionType(BranchPredictionType::DYNAMIC1BIT);
+                } else if (value == "dynamic_2bit") {
+                    setBranchPredictionType(BranchPredictionType::DYNAMIC2BIT);
+                } else {
+                    std::cerr << "Unknown branch prediction type: '" << value << "'. Defaulting to 'none'." << std::endl;
+                    setBranchPredictionType(BranchPredictionType::NONE);
+                }
+            }
         }
         else
         {
@@ -254,7 +275,7 @@ namespace vm_config
         config_file << "processor_type=" << getVmTypeString() << "\n";
         config_file << "hazard_detection=" << (isHazardDetectionEnabled() ? "true" : "false") << "\n";
         config_file << "forwarding=" << (isForwardingEnabled() ? "true" : "false") << "\n";
-        config_file << "branch_prediction=" << getBranchPredictionType() << "\n";
+        config_file << "branch_prediction=" << getBranchPredictionTypeString() << "\n";
         config_file << "instruction_execution_limit=" << instruction_execution_limit << "\n\n";
 
         config_file << "[Memory]\n";

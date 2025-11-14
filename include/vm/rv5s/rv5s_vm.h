@@ -11,6 +11,7 @@
 #include "vm/rv5s/rv5s_control_unit.h"
 #include "vm/pipeline_registers.h"
 #include <stack>
+#include <unordered_map>
 
 struct WbWriteInfo {
     bool occurred = false;
@@ -70,6 +71,18 @@ class RV5SVM : public VmBase {
         // the flag that pipelineDecode will use to tell pipelineStep whether to stall or not
         bool id_stall_ = false;
 
+        // Control Hazard Signals
+        bool PCFromEX_ = false; // Flag for whether to update PC from EX stage (mispredicted branch)
+        uint64_t PCTarget_ = 0; // Target PC from EX stage
+
+        // Signals From ID to Pipeline Step for Static Branch Prediction
+        bool IDPredictTaken_ = false;
+        uint64_t IDBranchTarget_ = 0;
+
+        // For 1-Bit Branch Prediction
+        // Branch History Table: maps PC addresses to prediction bits
+        std::unordered_map<uint64_t, bool> branch_history_table_;
+
         enum class ForwardSource{
             kNone, //use the value from the register file
             kFromExMem, // Forward from the EX/MEM pipeline register
@@ -78,9 +91,6 @@ class RV5SVM : public VmBase {
 
         ForwardSource forward_a_ = ForwardSource::kNone;
         ForwardSource forward_b_ = ForwardSource::kNone;
-
-
-
         
         IF_ID_Register pipelineFetch();
         ID_EX_Register pipelineDecode(const IF_ID_Register& if_id_reg);

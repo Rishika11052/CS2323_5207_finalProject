@@ -18,6 +18,7 @@ struct IF_ID_Register {
 // --- ID/EX Register ---
 // Holds the output of Decode, needed by Execute.
 struct ID_EX_Register {
+    
     // Control Signals (Generated in Decode)
     bool RegWrite = false;
     bool MemRead = false;
@@ -25,6 +26,14 @@ struct ID_EX_Register {
     bool MemToReg = false; // Decides WB mux source
     bool AluSrc = false;   // Decides ALU operand B source (Reg2 or Imm)
     alu::AluOp AluOperation = alu::AluOp::kNone; // Specific ALU operation
+
+    // Branch Control
+    uint64_t currentPC = 0; // Current PC value
+    bool isBranch = false; // True for BEQ, BNE, etc.
+    bool isJump = false;   // True for JAL, JALR
+    bool isJAL  = false;    // True for JAL, False for JALR
+
+    bool predictedTaken = false; // Was the branch predicted taken?
 
     // Data (Read/Generated in Decode)
     uint64_t reg1_value = 0;      // Value from rs1

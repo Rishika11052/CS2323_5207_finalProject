@@ -25,6 +25,14 @@ enum class VmTypes {
   MULTI_STAGE
 };
 
+// Branch Prediction Types
+enum class BranchPredictionType {
+  NONE,
+  STATIC,
+  DYNAMIC1BIT,
+  DYNAMIC2BIT,
+};
+
 struct VmConfig {
   VmTypes vm_type = VmTypes::SINGLE_STAGE;
   uint64_t run_step_delay = 300;
@@ -43,7 +51,7 @@ struct VmConfig {
   // Pipeline Toggles
   bool hazard_detection_enabled = false;
   bool forwarding_enabled = false;
-  std::string branch_prediction_type = "none";
+  BranchPredictionType branch_prediction_type = BranchPredictionType::NONE;
 
   void setVmType(const VmTypes &type) {
     vm_type = type;
@@ -154,12 +162,27 @@ struct VmConfig {
     return forwarding_enabled;
   }
 
-  void setBranchPredictionType(const std::string&type){
+  void setBranchPredictionType(BranchPredictionType type){
     branch_prediction_type = type;
   }
 
-  std::string getBranchPredictionType() const{
+  BranchPredictionType getBranchPredictionType() const{
     return branch_prediction_type;
+  }
+
+  std::string getBranchPredictionTypeString() const {
+    switch (branch_prediction_type) {
+      case BranchPredictionType::NONE:
+        return "none";
+      case BranchPredictionType::STATIC:
+        return "static";
+      case BranchPredictionType::DYNAMIC1BIT:
+        return "dynamic_1bit";
+      case BranchPredictionType::DYNAMIC2BIT:
+        return "dynamic_2bit";
+      default:
+        return "none";
+    }
   }
 
   void modifyConfig(const std::string &section, const std::string &key, const std::string &value, bool shouldSave = true);
