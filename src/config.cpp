@@ -156,21 +156,6 @@ namespace vm_config
             // Do nothing for now (e.g., for 'name=vm')
         } else if (section == "Cache") {
             // Do nothing for now
-        } else if (section == "BranchPrediction") {
-            if (key == "branch_prediction_type") {
-                if (value == "none") {
-                    setBranchPredictionType(BranchPredictionType::NONE);
-                } else if (value == "static") {
-                    setBranchPredictionType(BranchPredictionType::STATIC);
-                } else if (value == "dynamic_1bit") {
-                    setBranchPredictionType(BranchPredictionType::DYNAMIC1BIT);
-                } else if (value == "dynamic_2bit") {
-                    setBranchPredictionType(BranchPredictionType::DYNAMIC2BIT);
-                } else {
-                    std::cerr << "Unknown branch prediction type: '" << value << "'. Defaulting to 'none'." << std::endl;
-                    setBranchPredictionType(BranchPredictionType::NONE);
-                }
-            }
         }
         else
         {
@@ -299,11 +284,7 @@ namespace vm_config
         config_file << "cache_replacement_policy=LRU\n";
         config_file << "cache_write_hit_policy=write_back\n";
         config_file << "cache_write_miss_policy=write_allocate\n\n";
-
-        config_file << "[BranchPrediction]\n";
-        config_file << "branch_prediction_type=always_not_taken\n";
-        config_file << "branch_prediction_table_size=0\n";
-        config_file << "branch_prediction_table_associativity=0\n";
+        
         config_file.close();
 
     }
