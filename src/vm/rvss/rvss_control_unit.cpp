@@ -351,11 +351,11 @@ alu::AluOp RVSSControlUnit::GetAluSignal(uint32_t instruction, bool ALUOp) {
         break;
     }
     case 0b0110111: {// LUI
-        return alu::AluOp::kAdd;
+        return alu::AluOp::kLUI;
         break;
     }
     case 0b0010111: {// AUIPC
-        return alu::AluOp::kAdd;
+        return alu::AluOp::kAUIPC;
         break;
     }
     case 0b0000000: {// FENCE

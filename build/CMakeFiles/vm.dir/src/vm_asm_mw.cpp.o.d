@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: \
- /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_asm_mw.cpp \
+ /home/rishika/CArch/finalproject_5207/src/vm_asm_mw.cpp \
  /usr/include/stdc-predef.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/vm_asm_mw.h \
+ /home/rishika/CArch/finalproject_5207/include/vm_asm_mw.h \
  /usr/include/c++/13/map /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -148,9 +148,9 @@ CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/assembler/parser.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/assembler/tokens.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/assembler/code_generator.h \
+ /home/rishika/CArch/finalproject_5207/include/assembler/parser.h \
+ /home/rishika/CArch/finalproject_5207/include/assembler/tokens.h \
+ /home/rishika/CArch/finalproject_5207/include/assembler/code_generator.h \
  /usr/include/c++/13/array /usr/include/c++/13/iostream \
  /usr/include/c++/13/ostream /usr/include/c++/13/ios \
  /usr/include/c++/13/exception /usr/include/c++/13/bits/exception_ptr.h \
@@ -200,4 +200,4 @@ CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: \
  /usr/include/c++/13/bits/locale_conv.h \
  /usr/include/c++/13/bits/quoted_string.h /usr/include/c++/13/sstream \
  /usr/include/c++/13/bits/sstream.tcc \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/assembler/errors.h
+ /home/rishika/CArch/finalproject_5207/include/assembler/errors.h

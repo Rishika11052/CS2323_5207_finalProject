@@ -156,6 +156,11 @@ void RV5SVM::PipelinedStep() {
         // this stores what the pc's value will be at the end of the current clock cycle
         delta.new_pc = next_if_id_reg.pc_plus_4;
 
+        if (!PCFromEX_ && !IDPredictTaken_){
+            //only update pc here if not changing it due to branch/jump
+            program_counter_ = next_if_id_reg.pc_plus_4;        
+        }
+
     } 
     
     // Save all the calculated values into the pipeline registers
@@ -171,11 +176,6 @@ void RV5SVM::PipelinedStep() {
     delta.new_id_ex_reg = next_id_ex_reg;
     delta.new_if_id_reg = next_if_id_reg;
     delta.new_mem_wb_reg = next_mem_wb_reg;
-
-    //update pc if not stalling
-    if(!PCFromEX_ && !id_stall_ && !IDPredictTaken_){
-        program_counter_ = next_if_id_reg.pc_plus_4;        
-    }
 
     if (delta.instruction_retired) {
         instructions_retired_++;
@@ -490,6 +490,16 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
         result.MemWrite = false;
         result.MemToReg = false;
         return result;
+    }
+
+    // LUI Case
+    if (id_ex_reg.AluOperation == alu::AluOp::kLUI) {
+        ALUResult = static_cast<uint64_t>(id_ex_reg.immediate << 12);
+    }
+
+    // AUIPC Case
+    if (id_ex_reg.AluOperation == alu::AluOp::kAUIPC) {
+        ALUResult = id_ex_reg.currentPC + static_cast<int64_t>(id_ex_reg.immediate);
     }
 
     // Branch Handling

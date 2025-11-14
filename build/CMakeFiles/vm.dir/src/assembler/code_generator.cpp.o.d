@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o: \
- /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/code_generator.cpp \
+ /home/rishika/CArch/finalproject_5207/src/assembler/code_generator.cpp \
  /usr/include/stdc-predef.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/assembler/code_generator.h \
+ /home/rishika/CArch/finalproject_5207/include/assembler/code_generator.h \
  /usr/include/c++/13/array /usr/include/c++/13/compare \
  /usr/include/c++/13/concepts /usr/include/c++/13/type_traits \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
@@ -184,7 +184,7 @@ CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o: \
  /usr/include/c++/13/bits/locale_conv.h \
  /usr/include/c++/13/bits/quoted_string.h /usr/include/c++/13/sstream \
  /usr/include/c++/13/bits/sstream.tcc \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/common/instructions.h \
+ /home/rishika/CArch/finalproject_5207/include/common/instructions.h \
  /usr/include/c++/13/bitset /usr/include/c++/13/unordered_map \
  /usr/include/c++/13/bits/unordered_map.h \
  /usr/include/c++/13/bits/hashtable.h \

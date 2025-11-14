@@ -1,9 +1,9 @@
 CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o: \
- /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/memory_controller.cpp \
+ /home/rishika/CArch/finalproject_5207/src/vm/memory_controller.cpp \
  /usr/include/stdc-predef.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/memory_controller.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/../config.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/../globals.h \
+ /home/rishika/CArch/finalproject_5207/include/vm/memory_controller.h \
+ /home/rishika/CArch/finalproject_5207/include/vm/../config.h \
+ /home/rishika/CArch/finalproject_5207/include/vm/../globals.h \
  /usr/include/c++/13/filesystem \
  /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
@@ -197,8 +197,8 @@ CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/13/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++io.h \
  /usr/include/c++/13/bits/fstream.tcc \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/main_memory.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/config.h \
+ /home/rishika/CArch/finalproject_5207/include/vm/main_memory.h \
+ /home/rishika/CArch/finalproject_5207/include/config.h \
  /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
  /usr/include/c++/13/bits/vector.tcc /usr/include/c++/13/unordered_map \

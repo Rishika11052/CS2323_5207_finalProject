@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/common/instructions.cpp.o: \
- /home/aricmaji/Downloads/CS2323/FinalProject/src/common/instructions.cpp \
+ /home/rishika/CArch/finalproject_5207/src/common/instructions.cpp \
  /usr/include/stdc-predef.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/common/instructions.h \
+ /home/rishika/CArch/finalproject_5207/include/common/instructions.h \
  /usr/include/c++/13/bitset /usr/include/c++/13/bits/functexcept.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \

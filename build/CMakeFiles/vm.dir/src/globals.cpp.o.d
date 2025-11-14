@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/globals.cpp.o: \
- /home/aricmaji/Downloads/CS2323/FinalProject/src/globals.cpp \
+ /home/rishika/CArch/finalproject_5207/src/globals.cpp \
  /usr/include/stdc-predef.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/globals.h \
+ /home/rishika/CArch/finalproject_5207/include/globals.h \
  /usr/include/c++/13/filesystem \
  /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \

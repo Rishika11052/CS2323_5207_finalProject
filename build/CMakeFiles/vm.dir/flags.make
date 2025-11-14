@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/aricmaji/Downloads/CS2323/FinalProject/include
+CXX_INCLUDES = -I/home/rishika/CArch/finalproject_5207/include
 
 CXX_FLAGS = -O3 -DNDEBUG -std=c++20 -Wall -Wextra -pedantic -frounding-math -ffloat-store -g -O3
 

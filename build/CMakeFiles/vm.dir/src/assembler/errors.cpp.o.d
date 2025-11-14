@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/assembler/errors.cpp.o: \
- /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/errors.cpp \
+ /home/rishika/CArch/finalproject_5207/src/assembler/errors.cpp \
  /usr/include/stdc-predef.h \
- /home/aricmaji/Downloads/CS2323/FinalProject/include/assembler/errors.h \
+ /home/rishika/CArch/finalproject_5207/include/assembler/errors.h \
  /usr/include/c++/13/string /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
