@@ -156,8 +156,6 @@ namespace vm_config
             // Do nothing for now (e.g., for 'name=vm')
         } else if (section == "Cache") {
             // Do nothing for now
-<<<<<<< HEAD
-=======
         } else if (section == "BranchPrediction") {
             if (key == "branch_prediction_type") {
                 if (value == "none" || value == "always_not_taken") {
@@ -173,7 +171,6 @@ namespace vm_config
                     setBranchPredictionType(BranchPredictionType::NONE);
                 }
             }
->>>>>>> 18f6aab79dc5bddd0ff477d3e07c5e63b96d0d4a
         }
         else
         {
