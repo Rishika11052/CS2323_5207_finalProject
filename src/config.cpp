@@ -50,7 +50,7 @@ namespace vm_config
                 // Do nothing for now
             } else if (key == "branch_prediction") {
                 
-                if (value == "none") {
+                if (value == "none" || value == "always_not_taken") {
                     branch_prediction_type = BranchPredictionType::NONE;
                 } else if (value == "static") {
                     branch_prediction_type = BranchPredictionType::STATIC;
@@ -158,7 +158,7 @@ namespace vm_config
             // Do nothing for now
         } else if (section == "BranchPrediction") {
             if (key == "branch_prediction_type") {
-                if (value == "none") {
+                if (value == "none" || value == "always_not_taken") {
                     setBranchPredictionType(BranchPredictionType::NONE);
                 } else if (value == "static") {
                     setBranchPredictionType(BranchPredictionType::STATIC);

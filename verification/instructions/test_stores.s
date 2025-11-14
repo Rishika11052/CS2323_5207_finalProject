@@ -1,13 +1,10 @@
 # Tests: SW, SH, SB
 # Verifies by storing, then loading back
-.data
-.align 3
-store_target: .space 8
 .text
-    la x1, store_target
+    lui x1, 0x10000    # Load upper immediate to x1
     
-    addi x2, x0, 0xAABBCCDD
-    addi x3, x0, 0x1234
+    addi x2, x0, 0x123
+    addi x3, x0, 0x123
     addi x4, x0, 0x56
     
     # Store word
