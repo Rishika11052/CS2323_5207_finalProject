@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rishika/CArch/finalproject_5207
+CMAKE_SOURCE_DIR = /home/aricmaji/Downloads/CS2323/FinalProject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rishika/CArch/finalproject_5207/build
+CMAKE_BINARY_DIR = /home/aricmaji/Downloads/CS2323/FinalProject/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/vm.dir/depend.make
@@ -70,424 +70,424 @@ include CMakeFiles/vm.dir/progress.make
 include CMakeFiles/vm.dir/flags.make
 
 CMakeFiles/vm.dir/src/assembler/assembler.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/assembler.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/assembler.cpp
+CMakeFiles/vm.dir/src/assembler/assembler.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/assembler.cpp
 CMakeFiles/vm.dir/src/assembler/assembler.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/vm.dir/src/assembler/assembler.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/assembler.cpp.o -MF CMakeFiles/vm.dir/src/assembler/assembler.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/assembler.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/assembler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/vm.dir/src/assembler/assembler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/assembler.cpp.o -MF CMakeFiles/vm.dir/src/assembler/assembler.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/assembler.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/assembler.cpp
 
 CMakeFiles/vm.dir/src/assembler/assembler.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/assembler.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/assembler.cpp > CMakeFiles/vm.dir/src/assembler/assembler.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/assembler.cpp > CMakeFiles/vm.dir/src/assembler/assembler.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/assembler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/assembler.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/assembler.cpp -o CMakeFiles/vm.dir/src/assembler/assembler.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/assembler.cpp -o CMakeFiles/vm.dir/src/assembler/assembler.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/code_generator.cpp
+CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/code_generator.cpp
 CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o -MF CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/code_generator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o -MF CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/code_generator.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/code_generator.cpp
 
 CMakeFiles/vm.dir/src/assembler/code_generator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/code_generator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/code_generator.cpp > CMakeFiles/vm.dir/src/assembler/code_generator.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/code_generator.cpp > CMakeFiles/vm.dir/src/assembler/code_generator.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/code_generator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/code_generator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/code_generator.cpp -o CMakeFiles/vm.dir/src/assembler/code_generator.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/code_generator.cpp -o CMakeFiles/vm.dir/src/assembler/code_generator.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/elf_util.cpp
+CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/elf_util.cpp
 CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o -MF CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/elf_util.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o -MF CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/elf_util.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/elf_util.cpp
 
 CMakeFiles/vm.dir/src/assembler/elf_util.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/elf_util.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/elf_util.cpp > CMakeFiles/vm.dir/src/assembler/elf_util.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/elf_util.cpp > CMakeFiles/vm.dir/src/assembler/elf_util.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/elf_util.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/elf_util.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/elf_util.cpp -o CMakeFiles/vm.dir/src/assembler/elf_util.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/elf_util.cpp -o CMakeFiles/vm.dir/src/assembler/elf_util.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/errors.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/errors.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/errors.cpp
+CMakeFiles/vm.dir/src/assembler/errors.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/errors.cpp
 CMakeFiles/vm.dir/src/assembler/errors.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/vm.dir/src/assembler/errors.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/errors.cpp.o -MF CMakeFiles/vm.dir/src/assembler/errors.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/errors.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/errors.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/vm.dir/src/assembler/errors.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/errors.cpp.o -MF CMakeFiles/vm.dir/src/assembler/errors.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/errors.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/errors.cpp
 
 CMakeFiles/vm.dir/src/assembler/errors.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/errors.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/errors.cpp > CMakeFiles/vm.dir/src/assembler/errors.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/errors.cpp > CMakeFiles/vm.dir/src/assembler/errors.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/errors.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/errors.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/errors.cpp -o CMakeFiles/vm.dir/src/assembler/errors.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/errors.cpp -o CMakeFiles/vm.dir/src/assembler/errors.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/lexer.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/lexer.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/lexer.cpp
+CMakeFiles/vm.dir/src/assembler/lexer.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/lexer.cpp
 CMakeFiles/vm.dir/src/assembler/lexer.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/vm.dir/src/assembler/lexer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/lexer.cpp.o -MF CMakeFiles/vm.dir/src/assembler/lexer.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/lexer.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/lexer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/vm.dir/src/assembler/lexer.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/lexer.cpp.o -MF CMakeFiles/vm.dir/src/assembler/lexer.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/lexer.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/lexer.cpp
 
 CMakeFiles/vm.dir/src/assembler/lexer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/lexer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/lexer.cpp > CMakeFiles/vm.dir/src/assembler/lexer.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/lexer.cpp > CMakeFiles/vm.dir/src/assembler/lexer.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/lexer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/lexer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/lexer.cpp -o CMakeFiles/vm.dir/src/assembler/lexer.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/lexer.cpp -o CMakeFiles/vm.dir/src/assembler/lexer.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/csr_formats.cpp
+CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/csr_formats.cpp
 CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/csr_formats.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/csr_formats.cpp
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/csr_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/csr_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/csr_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/csr_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/csr_formats.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/f_d_formats.cpp
+CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/f_d_formats.cpp
 CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/f_d_formats.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/f_d_formats.cpp
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/f_d_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/f_d_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/f_d_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/f_d_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/f_d_formats.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/i_m_formats.cpp
+CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/i_m_formats.cpp
 CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/i_m_formats.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/i_m_formats.cpp
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/i_m_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/i_m_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/i_m_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/i_m_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/i_m_formats.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/pseudo_formats.cpp
+CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/pseudo_formats.cpp
 CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/pseudo_formats.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/pseudo_formats.cpp
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/pseudo_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/pseudo_formats.cpp > CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/parse_formats/pseudo_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parse_formats/pseudo_formats.cpp -o CMakeFiles/vm.dir/src/assembler/parse_formats/pseudo_formats.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/parser.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/parser.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/parser.cpp
+CMakeFiles/vm.dir/src/assembler/parser.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parser.cpp
 CMakeFiles/vm.dir/src/assembler/parser.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/vm.dir/src/assembler/parser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parser.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parser.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parser.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/parser.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/vm.dir/src/assembler/parser.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/parser.cpp.o -MF CMakeFiles/vm.dir/src/assembler/parser.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/parser.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parser.cpp
 
 CMakeFiles/vm.dir/src/assembler/parser.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/parser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/parser.cpp > CMakeFiles/vm.dir/src/assembler/parser.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parser.cpp > CMakeFiles/vm.dir/src/assembler/parser.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/parser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/parser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/parser.cpp -o CMakeFiles/vm.dir/src/assembler/parser.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/parser.cpp -o CMakeFiles/vm.dir/src/assembler/parser.cpp.s
 
 CMakeFiles/vm.dir/src/assembler/tokens.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/assembler/tokens.cpp.o: /home/rishika/CArch/finalproject_5207/src/assembler/tokens.cpp
+CMakeFiles/vm.dir/src/assembler/tokens.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/tokens.cpp
 CMakeFiles/vm.dir/src/assembler/tokens.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/vm.dir/src/assembler/tokens.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/tokens.cpp.o -MF CMakeFiles/vm.dir/src/assembler/tokens.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/tokens.cpp.o -c /home/rishika/CArch/finalproject_5207/src/assembler/tokens.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/vm.dir/src/assembler/tokens.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/assembler/tokens.cpp.o -MF CMakeFiles/vm.dir/src/assembler/tokens.cpp.o.d -o CMakeFiles/vm.dir/src/assembler/tokens.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/tokens.cpp
 
 CMakeFiles/vm.dir/src/assembler/tokens.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/assembler/tokens.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/assembler/tokens.cpp > CMakeFiles/vm.dir/src/assembler/tokens.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/tokens.cpp > CMakeFiles/vm.dir/src/assembler/tokens.cpp.i
 
 CMakeFiles/vm.dir/src/assembler/tokens.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/assembler/tokens.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/assembler/tokens.cpp -o CMakeFiles/vm.dir/src/assembler/tokens.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/assembler/tokens.cpp -o CMakeFiles/vm.dir/src/assembler/tokens.cpp.s
 
 CMakeFiles/vm.dir/src/command_handler.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/command_handler.cpp.o: /home/rishika/CArch/finalproject_5207/src/command_handler.cpp
+CMakeFiles/vm.dir/src/command_handler.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/command_handler.cpp
 CMakeFiles/vm.dir/src/command_handler.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/vm.dir/src/command_handler.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/command_handler.cpp.o -MF CMakeFiles/vm.dir/src/command_handler.cpp.o.d -o CMakeFiles/vm.dir/src/command_handler.cpp.o -c /home/rishika/CArch/finalproject_5207/src/command_handler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/vm.dir/src/command_handler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/command_handler.cpp.o -MF CMakeFiles/vm.dir/src/command_handler.cpp.o.d -o CMakeFiles/vm.dir/src/command_handler.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/command_handler.cpp
 
 CMakeFiles/vm.dir/src/command_handler.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/command_handler.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/command_handler.cpp > CMakeFiles/vm.dir/src/command_handler.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/command_handler.cpp > CMakeFiles/vm.dir/src/command_handler.cpp.i
 
 CMakeFiles/vm.dir/src/command_handler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/command_handler.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/command_handler.cpp -o CMakeFiles/vm.dir/src/command_handler.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/command_handler.cpp -o CMakeFiles/vm.dir/src/command_handler.cpp.s
 
 CMakeFiles/vm.dir/src/common/instructions.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/common/instructions.cpp.o: /home/rishika/CArch/finalproject_5207/src/common/instructions.cpp
+CMakeFiles/vm.dir/src/common/instructions.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/common/instructions.cpp
 CMakeFiles/vm.dir/src/common/instructions.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/vm.dir/src/common/instructions.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/common/instructions.cpp.o -MF CMakeFiles/vm.dir/src/common/instructions.cpp.o.d -o CMakeFiles/vm.dir/src/common/instructions.cpp.o -c /home/rishika/CArch/finalproject_5207/src/common/instructions.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/vm.dir/src/common/instructions.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/common/instructions.cpp.o -MF CMakeFiles/vm.dir/src/common/instructions.cpp.o.d -o CMakeFiles/vm.dir/src/common/instructions.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/common/instructions.cpp
 
 CMakeFiles/vm.dir/src/common/instructions.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/common/instructions.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/common/instructions.cpp > CMakeFiles/vm.dir/src/common/instructions.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/common/instructions.cpp > CMakeFiles/vm.dir/src/common/instructions.cpp.i
 
 CMakeFiles/vm.dir/src/common/instructions.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/common/instructions.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/common/instructions.cpp -o CMakeFiles/vm.dir/src/common/instructions.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/common/instructions.cpp -o CMakeFiles/vm.dir/src/common/instructions.cpp.s
 
 CMakeFiles/vm.dir/src/config.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/config.cpp.o: /home/rishika/CArch/finalproject_5207/src/config.cpp
+CMakeFiles/vm.dir/src/config.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/config.cpp
 CMakeFiles/vm.dir/src/config.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/vm.dir/src/config.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/config.cpp.o -MF CMakeFiles/vm.dir/src/config.cpp.o.d -o CMakeFiles/vm.dir/src/config.cpp.o -c /home/rishika/CArch/finalproject_5207/src/config.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/vm.dir/src/config.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/config.cpp.o -MF CMakeFiles/vm.dir/src/config.cpp.o.d -o CMakeFiles/vm.dir/src/config.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/config.cpp
 
 CMakeFiles/vm.dir/src/config.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/config.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/config.cpp > CMakeFiles/vm.dir/src/config.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/config.cpp > CMakeFiles/vm.dir/src/config.cpp.i
 
 CMakeFiles/vm.dir/src/config.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/config.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/config.cpp -o CMakeFiles/vm.dir/src/config.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/config.cpp -o CMakeFiles/vm.dir/src/config.cpp.s
 
 CMakeFiles/vm.dir/src/globals.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/globals.cpp.o: /home/rishika/CArch/finalproject_5207/src/globals.cpp
+CMakeFiles/vm.dir/src/globals.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/globals.cpp
 CMakeFiles/vm.dir/src/globals.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/vm.dir/src/globals.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/globals.cpp.o -MF CMakeFiles/vm.dir/src/globals.cpp.o.d -o CMakeFiles/vm.dir/src/globals.cpp.o -c /home/rishika/CArch/finalproject_5207/src/globals.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/vm.dir/src/globals.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/globals.cpp.o -MF CMakeFiles/vm.dir/src/globals.cpp.o.d -o CMakeFiles/vm.dir/src/globals.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/globals.cpp
 
 CMakeFiles/vm.dir/src/globals.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/globals.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/globals.cpp > CMakeFiles/vm.dir/src/globals.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/globals.cpp > CMakeFiles/vm.dir/src/globals.cpp.i
 
 CMakeFiles/vm.dir/src/globals.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/globals.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/globals.cpp -o CMakeFiles/vm.dir/src/globals.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/globals.cpp -o CMakeFiles/vm.dir/src/globals.cpp.s
 
 CMakeFiles/vm.dir/src/main.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/main.cpp.o: /home/rishika/CArch/finalproject_5207/src/main.cpp
+CMakeFiles/vm.dir/src/main.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/main.cpp
 CMakeFiles/vm.dir/src/main.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/vm.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/main.cpp.o -MF CMakeFiles/vm.dir/src/main.cpp.o.d -o CMakeFiles/vm.dir/src/main.cpp.o -c /home/rishika/CArch/finalproject_5207/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/vm.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/main.cpp.o -MF CMakeFiles/vm.dir/src/main.cpp.o.d -o CMakeFiles/vm.dir/src/main.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/main.cpp
 
 CMakeFiles/vm.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/main.cpp > CMakeFiles/vm.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/main.cpp > CMakeFiles/vm.dir/src/main.cpp.i
 
 CMakeFiles/vm.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/main.cpp -o CMakeFiles/vm.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/main.cpp -o CMakeFiles/vm.dir/src/main.cpp.s
 
 CMakeFiles/vm.dir/src/utils.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/utils.cpp.o: /home/rishika/CArch/finalproject_5207/src/utils.cpp
+CMakeFiles/vm.dir/src/utils.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/utils.cpp
 CMakeFiles/vm.dir/src/utils.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/vm.dir/src/utils.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/utils.cpp.o -MF CMakeFiles/vm.dir/src/utils.cpp.o.d -o CMakeFiles/vm.dir/src/utils.cpp.o -c /home/rishika/CArch/finalproject_5207/src/utils.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/vm.dir/src/utils.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/utils.cpp.o -MF CMakeFiles/vm.dir/src/utils.cpp.o.d -o CMakeFiles/vm.dir/src/utils.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/utils.cpp
 
 CMakeFiles/vm.dir/src/utils.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/utils.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/utils.cpp > CMakeFiles/vm.dir/src/utils.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/utils.cpp > CMakeFiles/vm.dir/src/utils.cpp.i
 
 CMakeFiles/vm.dir/src/utils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/utils.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/utils.cpp -o CMakeFiles/vm.dir/src/utils.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/utils.cpp -o CMakeFiles/vm.dir/src/utils.cpp.s
 
 CMakeFiles/vm.dir/src/vm/alu.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/alu.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/alu.cpp
+CMakeFiles/vm.dir/src/vm/alu.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/alu.cpp
 CMakeFiles/vm.dir/src/vm/alu.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/vm.dir/src/vm/alu.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/alu.cpp.o -MF CMakeFiles/vm.dir/src/vm/alu.cpp.o.d -o CMakeFiles/vm.dir/src/vm/alu.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/alu.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/vm.dir/src/vm/alu.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/alu.cpp.o -MF CMakeFiles/vm.dir/src/vm/alu.cpp.o.d -o CMakeFiles/vm.dir/src/vm/alu.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/alu.cpp
 
 CMakeFiles/vm.dir/src/vm/alu.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/alu.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/alu.cpp > CMakeFiles/vm.dir/src/vm/alu.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/alu.cpp > CMakeFiles/vm.dir/src/vm/alu.cpp.i
 
 CMakeFiles/vm.dir/src/vm/alu.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/alu.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/alu.cpp -o CMakeFiles/vm.dir/src/vm/alu.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/alu.cpp -o CMakeFiles/vm.dir/src/vm/alu.cpp.s
 
 CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/cache/cache.cpp
+CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/cache/cache.cpp
 CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o -MF CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o.d -o CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/cache/cache.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o -MF CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o.d -o CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/cache/cache.cpp
 
 CMakeFiles/vm.dir/src/vm/cache/cache.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/cache/cache.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/cache/cache.cpp > CMakeFiles/vm.dir/src/vm/cache/cache.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/cache/cache.cpp > CMakeFiles/vm.dir/src/vm/cache/cache.cpp.i
 
 CMakeFiles/vm.dir/src/vm/cache/cache.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/cache/cache.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/cache/cache.cpp -o CMakeFiles/vm.dir/src/vm/cache/cache.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/cache/cache.cpp -o CMakeFiles/vm.dir/src/vm/cache/cache.cpp.s
 
 CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/control_unit_base.cpp
+CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/control_unit_base.cpp
 CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o -MF CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o.d -o CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/control_unit_base.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o -MF CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o.d -o CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/control_unit_base.cpp
 
 CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/control_unit_base.cpp > CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/control_unit_base.cpp > CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.i
 
 CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/control_unit_base.cpp -o CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/control_unit_base.cpp -o CMakeFiles/vm.dir/src/vm/control_unit_base.cpp.s
 
 CMakeFiles/vm.dir/src/vm/main_memory.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/main_memory.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/main_memory.cpp
+CMakeFiles/vm.dir/src/vm/main_memory.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/main_memory.cpp
 CMakeFiles/vm.dir/src/vm/main_memory.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/vm.dir/src/vm/main_memory.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/main_memory.cpp.o -MF CMakeFiles/vm.dir/src/vm/main_memory.cpp.o.d -o CMakeFiles/vm.dir/src/vm/main_memory.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/main_memory.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/vm.dir/src/vm/main_memory.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/main_memory.cpp.o -MF CMakeFiles/vm.dir/src/vm/main_memory.cpp.o.d -o CMakeFiles/vm.dir/src/vm/main_memory.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/main_memory.cpp
 
 CMakeFiles/vm.dir/src/vm/main_memory.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/main_memory.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/main_memory.cpp > CMakeFiles/vm.dir/src/vm/main_memory.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/main_memory.cpp > CMakeFiles/vm.dir/src/vm/main_memory.cpp.i
 
 CMakeFiles/vm.dir/src/vm/main_memory.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/main_memory.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/main_memory.cpp -o CMakeFiles/vm.dir/src/vm/main_memory.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/main_memory.cpp -o CMakeFiles/vm.dir/src/vm/main_memory.cpp.s
 
 CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/memory_controller.cpp
+CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/memory_controller.cpp
 CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o -MF CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o.d -o CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/memory_controller.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o -MF CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o.d -o CMakeFiles/vm.dir/src/vm/memory_controller.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/memory_controller.cpp
 
 CMakeFiles/vm.dir/src/vm/memory_controller.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/memory_controller.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/memory_controller.cpp > CMakeFiles/vm.dir/src/vm/memory_controller.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/memory_controller.cpp > CMakeFiles/vm.dir/src/vm/memory_controller.cpp.i
 
 CMakeFiles/vm.dir/src/vm/memory_controller.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/memory_controller.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/memory_controller.cpp -o CMakeFiles/vm.dir/src/vm/memory_controller.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/memory_controller.cpp -o CMakeFiles/vm.dir/src/vm/memory_controller.cpp.s
 
 CMakeFiles/vm.dir/src/vm/registers.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/registers.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/registers.cpp
+CMakeFiles/vm.dir/src/vm/registers.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/registers.cpp
 CMakeFiles/vm.dir/src/vm/registers.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/vm.dir/src/vm/registers.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/registers.cpp.o -MF CMakeFiles/vm.dir/src/vm/registers.cpp.o.d -o CMakeFiles/vm.dir/src/vm/registers.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/registers.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/vm.dir/src/vm/registers.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/registers.cpp.o -MF CMakeFiles/vm.dir/src/vm/registers.cpp.o.d -o CMakeFiles/vm.dir/src/vm/registers.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/registers.cpp
 
 CMakeFiles/vm.dir/src/vm/registers.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/registers.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/registers.cpp > CMakeFiles/vm.dir/src/vm/registers.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/registers.cpp > CMakeFiles/vm.dir/src/vm/registers.cpp.i
 
 CMakeFiles/vm.dir/src/vm/registers.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/registers.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/registers.cpp -o CMakeFiles/vm.dir/src/vm/registers.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/registers.cpp -o CMakeFiles/vm.dir/src/vm/registers.cpp.s
 
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_control_unit.cpp
+CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_control_unit.cpp
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o -MF CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_control_unit.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o -MF CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_control_unit.cpp
 
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_control_unit.cpp > CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_control_unit.cpp > CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.i
 
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_control_unit.cpp -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_control_unit.cpp -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_control_unit.cpp.s
 
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_vm.cpp
+CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_vm.cpp
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o -MF CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_vm.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building CXX object CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o -MF CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_vm.cpp
 
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_vm.cpp > CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_vm.cpp > CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.i
 
 CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/rv5s/rv5s_vm.cpp -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rv5s/rv5s_vm.cpp -o CMakeFiles/vm.dir/src/vm/rv5s/rv5s_vm.cpp.s
 
 CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_control_unit.cpp
+CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_control_unit.cpp
 CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o -MF CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_control_unit.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building CXX object CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o -MF CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_control_unit.cpp
 
 CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_control_unit.cpp > CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_control_unit.cpp > CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.i
 
 CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_control_unit.cpp -o CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_control_unit.cpp -o CMakeFiles/vm.dir/src/vm/rvss/rvss_control_unit.cpp.s
 
 CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_vm.cpp
+CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_vm.cpp
 CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o -MF CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_vm.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building CXX object CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o -MF CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o.d -o CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_vm.cpp
 
 CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_vm.cpp > CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_vm.cpp > CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.i
 
 CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/rvss/rvss_vm.cpp -o CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/rvss/rvss_vm.cpp -o CMakeFiles/vm.dir/src/vm/rvss/rvss_vm.cpp.s
 
 CMakeFiles/vm.dir/src/vm/vm_base.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm/vm_base.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm/vm_base.cpp
+CMakeFiles/vm.dir/src/vm/vm_base.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/vm_base.cpp
 CMakeFiles/vm.dir/src/vm/vm_base.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/vm.dir/src/vm/vm_base.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/vm_base.cpp.o -MF CMakeFiles/vm.dir/src/vm/vm_base.cpp.o.d -o CMakeFiles/vm.dir/src/vm/vm_base.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm/vm_base.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building CXX object CMakeFiles/vm.dir/src/vm/vm_base.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm/vm_base.cpp.o -MF CMakeFiles/vm.dir/src/vm/vm_base.cpp.o.d -o CMakeFiles/vm.dir/src/vm/vm_base.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/vm_base.cpp
 
 CMakeFiles/vm.dir/src/vm/vm_base.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm/vm_base.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm/vm_base.cpp > CMakeFiles/vm.dir/src/vm/vm_base.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/vm_base.cpp > CMakeFiles/vm.dir/src/vm/vm_base.cpp.i
 
 CMakeFiles/vm.dir/src/vm/vm_base.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm/vm_base.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm/vm_base.cpp -o CMakeFiles/vm.dir/src/vm/vm_base.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/vm_base.cpp -o CMakeFiles/vm.dir/src/vm/vm_base.cpp.s
 
 CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm_asm_mw.cpp
+CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_asm_mw.cpp
 CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o -MF CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o.d -o CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm_asm_mw.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building CXX object CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o -MF CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o.d -o CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_asm_mw.cpp
 
 CMakeFiles/vm.dir/src/vm_asm_mw.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm_asm_mw.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm_asm_mw.cpp > CMakeFiles/vm.dir/src/vm_asm_mw.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_asm_mw.cpp > CMakeFiles/vm.dir/src/vm_asm_mw.cpp.i
 
 CMakeFiles/vm.dir/src/vm_asm_mw.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm_asm_mw.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm_asm_mw.cpp -o CMakeFiles/vm.dir/src/vm_asm_mw.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_asm_mw.cpp -o CMakeFiles/vm.dir/src/vm_asm_mw.cpp.s
 
 CMakeFiles/vm.dir/src/vm_runner.cpp.o: CMakeFiles/vm.dir/flags.make
-CMakeFiles/vm.dir/src/vm_runner.cpp.o: /home/rishika/CArch/finalproject_5207/src/vm_runner.cpp
+CMakeFiles/vm.dir/src/vm_runner.cpp.o: /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_runner.cpp
 CMakeFiles/vm.dir/src/vm_runner.cpp.o: CMakeFiles/vm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/vm.dir/src/vm_runner.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm_runner.cpp.o -MF CMakeFiles/vm.dir/src/vm_runner.cpp.o.d -o CMakeFiles/vm.dir/src/vm_runner.cpp.o -c /home/rishika/CArch/finalproject_5207/src/vm_runner.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Building CXX object CMakeFiles/vm.dir/src/vm_runner.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/vm.dir/src/vm_runner.cpp.o -MF CMakeFiles/vm.dir/src/vm_runner.cpp.o.d -o CMakeFiles/vm.dir/src/vm_runner.cpp.o -c /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_runner.cpp
 
 CMakeFiles/vm.dir/src/vm_runner.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/vm.dir/src/vm_runner.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/rishika/CArch/finalproject_5207/src/vm_runner.cpp > CMakeFiles/vm.dir/src/vm_runner.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_runner.cpp > CMakeFiles/vm.dir/src/vm_runner.cpp.i
 
 CMakeFiles/vm.dir/src/vm_runner.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/vm.dir/src/vm_runner.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/rishika/CArch/finalproject_5207/src/vm_runner.cpp -o CMakeFiles/vm.dir/src/vm_runner.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/aricmaji/Downloads/CS2323/FinalProject/src/vm_runner.cpp -o CMakeFiles/vm.dir/src/vm_runner.cpp.s
 
 # Object files for target vm
 vm_OBJECTS = \
@@ -557,7 +557,7 @@ vm: CMakeFiles/vm.dir/src/vm_asm_mw.cpp.o
 vm: CMakeFiles/vm.dir/src/vm_runner.cpp.o
 vm: CMakeFiles/vm.dir/build.make
 vm: CMakeFiles/vm.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/rishika/CArch/finalproject_5207/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Linking CXX executable vm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Linking CXX executable vm"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/vm.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -569,6 +569,6 @@ CMakeFiles/vm.dir/clean:
 .PHONY : CMakeFiles/vm.dir/clean
 
 CMakeFiles/vm.dir/depend:
-	cd /home/rishika/CArch/finalproject_5207/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rishika/CArch/finalproject_5207 /home/rishika/CArch/finalproject_5207 /home/rishika/CArch/finalproject_5207/build /home/rishika/CArch/finalproject_5207/build /home/rishika/CArch/finalproject_5207/build/CMakeFiles/vm.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/aricmaji/Downloads/CS2323/FinalProject/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aricmaji/Downloads/CS2323/FinalProject /home/aricmaji/Downloads/CS2323/FinalProject /home/aricmaji/Downloads/CS2323/FinalProject/build /home/aricmaji/Downloads/CS2323/FinalProject/build /home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/vm.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/vm.dir/depend
 

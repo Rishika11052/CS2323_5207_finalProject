@@ -1,9 +1,9 @@
 CMakeFiles/vm.dir/src/vm/main_memory.cpp.o: \
- /home/rishika/CArch/finalproject_5207/src/vm/main_memory.cpp \
+ /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/main_memory.cpp \
  /usr/include/stdc-predef.h \
- /home/rishika/CArch/finalproject_5207/include/vm/main_memory.h \
- /home/rishika/CArch/finalproject_5207/include/config.h \
- /home/rishika/CArch/finalproject_5207/include/globals.h \
+ /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/main_memory.h \
+ /home/aricmaji/Downloads/CS2323/FinalProject/include/config.h \
+ /home/aricmaji/Downloads/CS2323/FinalProject/include/globals.h \
  /usr/include/c++/13/filesystem \
  /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
@@ -206,7 +206,7 @@ CMakeFiles/vm.dir/src/vm/main_memory.cpp.o: \
  /usr/include/c++/13/bits/enable_special_members.h \
  /usr/include/c++/13/bits/node_handle.h \
  /usr/include/c++/13/bits/erase_if.h \
- /home/rishika/CArch/finalproject_5207/include/globals.h \
+ /home/aricmaji/Downloads/CS2323/FinalProject/include/globals.h \
  /usr/include/c++/13/cstring /usr/include/string.h /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \

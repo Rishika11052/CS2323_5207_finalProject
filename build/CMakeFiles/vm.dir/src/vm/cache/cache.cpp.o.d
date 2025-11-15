@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/vm/cache/cache.cpp.o: \
- /home/rishika/CArch/finalproject_5207/src/vm/cache/cache.cpp \
+ /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/cache/cache.cpp \
  /usr/include/stdc-predef.h \
- /home/rishika/CArch/finalproject_5207/include/vm/cache/cache.h \
+ /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/cache/cache.h \
  /usr/include/c++/13/cstdint \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \

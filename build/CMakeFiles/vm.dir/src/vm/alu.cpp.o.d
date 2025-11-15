@@ -1,7 +1,7 @@
 CMakeFiles/vm.dir/src/vm/alu.cpp.o: \
- /home/rishika/CArch/finalproject_5207/src/vm/alu.cpp \
+ /home/aricmaji/Downloads/CS2323/FinalProject/src/vm/alu.cpp \
  /usr/include/stdc-predef.h \
- /home/rishika/CArch/finalproject_5207/include/vm/alu.h \
+ /home/aricmaji/Downloads/CS2323/FinalProject/include/vm/alu.h \
  /usr/include/c++/13/cfenv \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \

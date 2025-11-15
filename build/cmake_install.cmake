@@ -1,4 +1,4 @@
-# Install script for directory: /home/rishika/CArch/finalproject_5207
+# Install script for directory: /home/aricmaji/Downloads/CS2323/FinalProject
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/rishika/CArch/finalproject_5207/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/aricmaji/Downloads/CS2323/FinalProject/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

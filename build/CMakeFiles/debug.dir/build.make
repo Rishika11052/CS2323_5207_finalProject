@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rishika/CArch/finalproject_5207
+CMAKE_SOURCE_DIR = /home/aricmaji/Downloads/CS2323/FinalProject
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rishika/CArch/finalproject_5207/build
+CMAKE_BINARY_DIR = /home/aricmaji/Downloads/CS2323/FinalProject/build
 
 # Utility rule file for debug.
 
@@ -82,6 +82,6 @@ CMakeFiles/debug.dir/clean:
 .PHONY : CMakeFiles/debug.dir/clean
 
 CMakeFiles/debug.dir/depend:
-	cd /home/rishika/CArch/finalproject_5207/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rishika/CArch/finalproject_5207 /home/rishika/CArch/finalproject_5207 /home/rishika/CArch/finalproject_5207/build /home/rishika/CArch/finalproject_5207/build /home/rishika/CArch/finalproject_5207/build/CMakeFiles/debug.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/aricmaji/Downloads/CS2323/FinalProject/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aricmaji/Downloads/CS2323/FinalProject /home/aricmaji/Downloads/CS2323/FinalProject /home/aricmaji/Downloads/CS2323/FinalProject/build /home/aricmaji/Downloads/CS2323/FinalProject/build /home/aricmaji/Downloads/CS2323/FinalProject/build/CMakeFiles/debug.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/debug.dir/depend
 
