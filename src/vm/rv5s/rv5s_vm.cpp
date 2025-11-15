@@ -243,17 +243,23 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     uint8_t rs2 = (instruction >> 20) & 0b11111;
     uint8_t funct7 = (instruction >> 25) & 0b1111111;
 
+    bool usesRS1 = (opcode != 0b0110111) && (opcode != 0b0010111) && (opcode != 0b1101111); // U-type and JAL instructions do not use rs1
+    bool usesRS2 = (opcode == 0b0100011) || (opcode == 0b0110011) || (opcode == 0b1100011); // S-type, R-type, B-type use rs2
+
     //Hazard Detection
     if(vm_config::config.isHazardDetectionEnabled()){
 
         //check if the instruction in EX stage is valid, if its a load instruction, if its not x0 and if rd = rs1 or rs2 of current instruction
-        bool isLoadUseHazard = id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1 || id_ex_reg_.rd == rs2);
+        bool isRS1LoadUseHazard = usesRS1 && id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1);
+        bool isRS2LoadUseHazard = usesRS2 && id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs2);
+        bool isLoadUseHazard = isRS1LoadUseHazard || isRS2LoadUseHazard;
         if(isLoadUseHazard){
             //stall so set flag to true
             id_stall_ = true;
 
             // Increment stall cycles
             stall_cycles_++;
+            std::cout << "Load-Use Hazard Detected: Stalling pipeline." << std::endl;
 
             //return a bubble
             return ID_EX_Register();
@@ -264,7 +270,9 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
             // Check for hazards from EX stage (when forwarding is disabled)
             // If the instruction in EX stage is valid, writes to a register, not x0, and its rd matches rs1 or rs2 of current instruction
-            bool isHazardFromEXStage = id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1 || id_ex_reg_.rd == rs2);
+            bool isRS1HazardFromEXStage = usesRS1 && id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1);
+            bool isRS2HazardFromEXStage = usesRS2 && id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs2);
+            bool isHazardFromEXStage = isRS1HazardFromEXStage || isRS2HazardFromEXStage;
 
             if (isHazardFromEXStage) {
                 // Stall due to hazard
@@ -272,6 +280,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                 // Increment stall cycles
                 stall_cycles_++;
+                std::cout << "Hazard Detected from EX Stage: Stalling pipeline." << std::endl;
 
                 // Return a bubble
                 return ID_EX_Register();
@@ -279,7 +288,9 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
             // Check for hazards from MEM stage (when forwarding is disabled)
             // If the instruction in MEM stage is valid, writes to a register, not x0, and its rd matches rs1 or rs2 of current instruction
-            bool isHazardFromMemStage = ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0 && (ex_mem_reg_.rd == rs1 || ex_mem_reg_.rd == rs2);
+            bool isRS1HazardFromMemStage = usesRS1 && ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0 && (ex_mem_reg_.rd == rs1);
+            bool isRS2HazardFromMemStage = usesRS2 && ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0 && (ex_mem_reg_.rd == rs2);
+            bool isHazardFromMemStage = isRS1HazardFromMemStage || isRS2HazardFromMemStage;
 
             if (isHazardFromMemStage) {
                 // Stall due to hazard
@@ -287,6 +298,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                 // Increment stall cycles
                 stall_cycles_++;
+                std::cout << "Hazard Detected from MEM Stage: Stalling pipeline." << std::endl;
 
                 // Return a bubble
                 return ID_EX_Register();
@@ -310,10 +322,10 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
         // --- Check for hazards from EX/MEM stage ---
         // (This data is from 2 cycles ago, so let it be overridden by newer data from ID/EX stage)
         if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
-            if (ex_mem_reg_.rd == rs1) {
+            if (ex_mem_reg_.rd == rs1 && usesRS1) {
                 forward_a_ = ForwardSource::kFromMemWb;
             }
-            if (ex_mem_reg_.rd == rs2) {
+            if (ex_mem_reg_.rd == rs2 && usesRS2) {
                 forward_b_ = ForwardSource::kFromMemWb;
             }
         }
@@ -323,10 +335,10 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
         if (id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0) {
             // Forward from ID/EX only if it's not a load instruction
             if (!id_ex_reg_.MemRead) { 
-                if (id_ex_reg_.rd == rs1) {
+                if (id_ex_reg_.rd == rs1 && usesRS1) {
                     forward_a_ = ForwardSource::kFromExMem;
                 }
-                if (id_ex_reg_.rd == rs2) {
+                if (id_ex_reg_.rd == rs2 && usesRS2) {
                     forward_b_ = ForwardSource::kFromExMem;
                 }
             }
