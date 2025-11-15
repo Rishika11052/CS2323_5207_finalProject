@@ -30,11 +30,13 @@ RV5SVM::RV5SVM() : VmBase() {
 }
 
 // ~ means destructor ; is called whenever an object of some class is destroyed; default means call the default version of the destructor
-//meaning destroy al member variables in normal way like no added stuff
+//meaning destroy all member variables in normal way like no added stuff
 RV5SVM::~RV5SVM() = default;
 
 
-// VM is in clean/default state ; all registers are cleared and stuff
+// VM is in clean/default state
+// It sets all counters(program counters and cycle_s_ to 0)
+// creates new empty pipeline registers and clears the undo/redo stack
 void RV5SVM::Reset() {
 
     program_counter_ = 0;
@@ -65,45 +67,55 @@ void RV5SVM::Reset() {
 
 }
 
+//Simulates One clock cycle
 //calls all the pipeline stages in reverse order
 // why?  the next state of each stage is based on the state of the pipeline at the beginning of each clock cycle
 // in real hardware , all pipeline registers update at the exact same time(when the signal changes from 0 to 1)
 //In C++ only one line runs at a time
-//If you run it in the right order , everything will happen one after th eother like in a single cycle
+//If you run it in the right order , everything will happen one after the other like in a single cycle
 // but here since you're  updating the main register in the end everything is updated simultaneously.
 void RV5SVM::PipelinedStep() {
 
+    //to snapshot the current stage 
+    // this is pushed to the undo/redo stack
     CycleDelta delta;
     delta.old_pc = program_counter_;
     delta.old_if_id_reg = if_id_reg_;
     delta.old_id_ex_reg = id_ex_reg_;
     delta.old_ex_mem_reg = ex_mem_reg_;
     delta.old_mem_wb_reg = mem_wb_reg_;
+    
+    // flag is used to initialize the CycleDelta Object
+    //when mem_wb_reg.valid is true(when WriteBack happens)
+    //so that the uno/redo functions know whether they need to increment or decrement instruction_retired_ count
     delta.instruction_retired = false;
 
+    // Run the Write Back Stage
     WbWriteInfo WBInfo = pipelineWriteBack(mem_wb_reg_);
     if (mem_wb_reg_.valid) {
         delta.instruction_retired = true;
     }
 
+    //Run the Memory Stage
     std::pair<MEM_WB_Register, MemWriteInfo> MemInfo = pipelineMemory(ex_mem_reg_);
     MEM_WB_Register next_mem_wb_reg = MemInfo.first;
+    //keeps track of data that was overwritten to some memory
     MemWriteInfo mem_info = MemInfo.second;
 
+    //Run the Execute Stage
     EX_MEM_Register next_ex_mem_reg = pipelineExecute(id_ex_reg_);
-
-    // Stall Logic  
-
+    
+    //Run the Decode Stage
     ID_EX_Register next_id_ex_reg = pipelineDecode(if_id_reg_);    
 
     IF_ID_Register next_if_id_reg;
 
     // CONTROL LOGIC FOR HAZARD DUE TO BRANCHES AND JUMPS AND STALLS
-
+    // Handles Branch Misprediction or jump because of execute stage
     if (PCFromEX_){
 
         // Misprediction detected (Modes iii, iv, v)
-
+        // Is hazard Detection is on , then flush the pipeline
         if (vm_config::config.isHazardDetectionEnabled()) {
 
             program_counter_ = PCTarget_; // update PC to branch target
@@ -149,16 +161,17 @@ void RV5SVM::PipelinedStep() {
             program_counter_ = next_if_id_reg.pc_plus_4;        
         }
 
-    }   
-
+    } 
+    
+    // Save all the calculated values into the pipeline registers
     delta.wb_write = WBInfo;
     delta.mem_write = mem_info;    
-
     if_id_reg_ = next_if_id_reg;
     id_ex_reg_ = next_id_ex_reg;
     ex_mem_reg_ = next_ex_mem_reg;
     mem_wb_reg_ = next_mem_wb_reg;
 
+    // After stage for the redo function
     delta.new_ex_mem_reg = next_ex_mem_reg;
     delta.new_id_ex_reg = next_id_ex_reg;
     delta.new_if_id_reg = next_if_id_reg;

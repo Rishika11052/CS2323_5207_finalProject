@@ -156,6 +156,8 @@ namespace vm_config
             // Do nothing for now (e.g., for 'name=vm')
         } else if (section == "Cache") {
             // Do nothing for now
+<<<<<<< HEAD
+=======
         } else if (section == "BranchPrediction") {
             if (key == "branch_prediction_type") {
                 if (value == "none" || value == "always_not_taken") {
@@ -171,6 +173,7 @@ namespace vm_config
                     setBranchPredictionType(BranchPredictionType::NONE);
                 }
             }
+>>>>>>> 18f6aab79dc5bddd0ff477d3e07c5e63b96d0d4a
         }
         else
         {
@@ -299,11 +302,7 @@ namespace vm_config
         config_file << "cache_replacement_policy=LRU\n";
         config_file << "cache_write_hit_policy=write_back\n";
         config_file << "cache_write_miss_policy=write_allocate\n\n";
-
-        config_file << "[BranchPrediction]\n";
-        config_file << "branch_prediction_type=always_not_taken\n";
-        config_file << "branch_prediction_table_size=0\n";
-        config_file << "branch_prediction_table_associativity=0\n";
+        
         config_file.close();
 
     }
