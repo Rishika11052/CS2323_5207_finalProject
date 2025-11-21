@@ -157,20 +157,7 @@ namespace vm_config
         } else if (section == "Cache") {
             // Do nothing for now
         } else if (section == "BranchPrediction") {
-            if (key == "branch_prediction_type") {
-                if (value == "none" || value == "always_not_taken") {
-                    setBranchPredictionType(BranchPredictionType::NONE);
-                } else if (value == "static") {
-                    setBranchPredictionType(BranchPredictionType::STATIC);
-                } else if (value == "dynamic_1bit") {
-                    setBranchPredictionType(BranchPredictionType::DYNAMIC1BIT);
-                } else if (value == "dynamic_2bit") {
-                    setBranchPredictionType(BranchPredictionType::DYNAMIC2BIT);
-                } else {
-                    std::cerr << "Unknown branch prediction type: '" << value << "'. Defaulting to 'none'." << std::endl;
-                    setBranchPredictionType(BranchPredictionType::NONE);
-                }
-            }
+            // Do nothing for now
         }
         else
         {

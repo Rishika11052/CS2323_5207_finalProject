@@ -127,6 +127,7 @@ void RV5SVM::PipelinedStep() {
     if(isHazardDetectionEnabled && EX_flushSignal) {
         next_ex_mem_reg = EX_MEM_Register(); // Default to bubble (Flush)
         stall_cycles_++; // Increment stall cycles
+        std::cout << "EX Stage Flush due to Control Hazard. Inserting Bubble. Branch pred off" << std::endl;
     } else {
         next_ex_mem_reg = pipelineExecute(id_ex_reg_); // Normal Execute
     }
@@ -136,9 +137,11 @@ void RV5SVM::PipelinedStep() {
     if (isHazardDetectionEnabled && EX_flushSignal) {
         next_id_ex_reg = ID_EX_Register(); // Default to bubble (Flush)
         stall_cycles_++; // Increment stall cycles
+        std::cout << "ID Stage Flush due to Control Hazard. Inserting Bubble. Branch pred off" << std::endl;
     }else if (isHazardDetectionEnabled && ID_flushSignal) {
         next_id_ex_reg = ID_EX_Register(); // Default to bubble (Flush)
         stall_cycles_++; // Increment stall cycles
+        std::cout << "ID Stage Flush due to Control Hazard. Inserting Bubble. Branch pred on" << std::endl;
     } else {
         next_id_ex_reg = pipelineDecode(if_id_reg_); // Normal Decode
     }
@@ -270,8 +273,14 @@ IF_ID_Register RV5SVM::pipelineFetch() {
                     int32_t imm = ImmGenerator(result.instruction);
                     predictedTarget = program_counter_ + static_cast<int64_t>(imm);
                 } else {
-                    // Predict not taken
-                    predictedTaken = false;
+                    // Follow Static Prediction: Backward branches taken, forward branches not taken
+                    int32_t imm = ImmGenerator(result.instruction);
+                    if (static_cast<int64_t>(imm) < 0) {
+                        predictedTaken = true;
+                        predictedTarget = program_counter_ + static_cast<int64_t>(imm);
+                    } else {
+                        predictedTaken = false;
+                    }
                 }
 
             }
@@ -327,7 +336,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     bool usesRS2 = (opcode == 0b0100011) || (opcode == 0b0110011) || (opcode == 0b1100011); // S-type, R-type, B-type use rs2
 
     //Hazard Detection
-    if(vm_config::config.isHazardDetectionEnabled() && (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011)) { // Exclude JAL and JALR and Branch from hazard detection
+    if(vm_config::config.isHazardDetectionEnabled() && (vm_config::config.branch_prediction_type == vm_config::BranchPredictionType::NONE || (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011))) { // Exclude JAL and JALR and Branch from hazard detection when branch prediction is enabled
 
         //check if the instruction in EX stage is valid, if its a load instruction, if its not x0 and if rd = rs1 or rs2 of current instruction
         bool isRS1LoadUseHazard = usesRS1 && id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1);
@@ -360,7 +369,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                 // Increment stall cycles
                 stall_cycles_++;
-                std::cout << "Hazard Detected from EX Stage: Stalling pipeline." << std::endl;
+                std::cout << "Hazard Detected from EX Stage (Forwarding Disabled): Stalling pipeline." << std::endl;
 
                 // Return a bubble
                 return ID_EX_Register();
@@ -378,7 +387,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                 // Increment stall cycles
                 stall_cycles_++;
-                std::cout << "Hazard Detected from MEM Stage: Stalling pipeline." << std::endl;
+                std::cout << "Hazard Detected from MEM Stage (Forwarding Disabled): Stalling pipeline." << std::endl;
 
                 // Return a bubble
                 return ID_EX_Register();
@@ -397,7 +406,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     forward_b_ = ForwardSource::kNone;
 
     // check if forwarding is enabled
-    if(vm_config::config.isForwardingEnabled() && (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011)) { // Exclude JAL and JALR and Branch from forwarding
+    if(vm_config::config.isForwardingEnabled() && (vm_config::config.branch_prediction_type == vm_config::BranchPredictionType::NONE || (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011))) { // Exclude JAL and JALR and Branch from forwarding when branch prediction is enabled
         
         // --- Check for hazards from EX/MEM stage ---
         // (This data is from 2 cycles ago, so let it be overridden by newer data from ID/EX stage)

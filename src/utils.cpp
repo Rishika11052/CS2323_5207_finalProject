@@ -415,7 +415,6 @@ void SetupConfigFile() {
   config_file << "cache_write_miss_policy=write_allocate\n\n";
 
   config_file << "[BranchPrediction]\n";
-  config_file << "branch_prediction_type=always_not_taken\n";
   config_file << "branch_prediction_table_size=0\n";
   config_file << "branch_prediction_table_associativity=0\n";
   config_file.close();
