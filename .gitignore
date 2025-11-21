@@ -1,5 +1,6 @@
 .idea/
 .vscode/
+build/
 examples/.vscode/
 .VSCodeCounter/
 test/test.txt
