@@ -18,6 +18,7 @@ extern std::filesystem::path registers_dump_file_path;
 extern std::filesystem::path memory_dump_file_path;
 extern std::filesystem::path cache_dump_file_path;
 extern std::filesystem::path vm_state_dump_file_path;
+extern std::filesystem::path pipeline_registers_dump_file_path;
 //extern std::string output_file;
 
 extern bool verbose_errors_print;

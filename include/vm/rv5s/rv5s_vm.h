@@ -101,6 +101,7 @@ class RV5SVM : public VmBase {
         void Undo() override;
         void Redo() override;
         void Reset() override;
+        void DumpPipelineRegisters(const std::filesystem::path &filename);
 
         void PrintType() {
             std::cout << "rv5svm" << std::endl;

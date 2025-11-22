@@ -43,11 +43,21 @@ namespace vm_config
                 setInstructionExecutionLimit(std::stoull(value));
             }
             else if (key == "hazard_detection") {
-                // Do nothing for now
-                setHazardDetectionEnabled(value == "true");
+                if (value == "true") {
+                    setHazardDetectionEnabled(true);
+                } else if (value == "false") {
+                    setHazardDetectionEnabled(false);
+                } else {
+                    throw std::invalid_argument("Unknown value for hazard_detection: " + value);
+                }
             } else if (key == "forwarding") {
-                setForwardingEnabled(value == "true");
-                // Do nothing for now
+                if (value == "true") {
+                    setForwardingEnabled(true);
+                } else if (value == "false") {
+                    setForwardingEnabled(false);
+                } else {
+                    throw std::invalid_argument("Unknown value for forwarding: " + value);
+                }
             } else if (key == "branch_prediction") {
                 
                 if (value == "none" || value == "always_not_taken") {

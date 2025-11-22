@@ -13,6 +13,8 @@
 #include "utils.h"
 #include <stdexcept>
 #include <algorithm>
+#include <fstream>
+#include <iomanip>
 
 
 // initializes the 5-stage virtual machine
@@ -22,6 +24,7 @@ RV5SVM::RV5SVM() : VmBase() {
     try {
         DumpRegisters(globals::registers_dump_file_path, registers_);
         DumpState(globals::vm_state_dump_file_path);
+        DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
     } catch (const std::exception& e) {
         std::cerr << "Warning: Failed to dump initial state in RV5SVM constructor: " << e.what() << std::endl;
     }
@@ -71,6 +74,7 @@ void RV5SVM::Reset() {
 
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
+    DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
     std::cout << "RV5SVM has been reset." << std::endl;
 
@@ -982,6 +986,7 @@ void RV5SVM::Run() {
 
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
+    DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
 }
 
@@ -1005,6 +1010,7 @@ void RV5SVM::Step() {
 
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
+    DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
     
 }
 
@@ -1038,6 +1044,7 @@ void RV5SVM::DebugRun() {
 
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
+    DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
 }
 
@@ -1099,9 +1106,127 @@ void RV5SVM::Undo() {
     output_status_ = "VM_UNDO_COMPLETED";
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
+    DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
 }
 
+void RV5SVM::DumpPipelineRegisters(const std::filesystem::path &filename) {
+
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Unable to open file for dumping pipeline registers: " << filename.string() << std::endl;
+        return;
+    }
+
+    auto format_hex = [](uint64_t value) {
+        std::stringstream ss;
+        ss << "0x" << std::hex << std::setw(16) << std::setfill('0') << value;
+        return ss.str();
+    };
+
+    auto format_hex32 = [](uint32_t value) {
+        std::stringstream ss;
+        ss << "0x" << std::hex << std::setw(8) << std::setfill('0') << value;
+        return ss.str();
+    };
+
+    auto format_hex8 = [](uint8_t value) {
+        std::stringstream ss;
+        ss << "0x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<uint32_t>(value);
+        return ss.str();
+    };
+
+    auto format_bool = [](bool value) {
+        return value ? "true" : "false";
+    };
+
+    auto format_alu_op = [](alu::AluOp op) {
+        std::stringstream ss;
+        ss << op; // This uses the operator << 
+        return ss.str();
+    };
+
+    file << "{\n";
+
+    // --- IF/ID Stage ---
+    file << "  \"IF_ID\": {\n";
+    file << "    \"pc\": \"" << format_hex(if_id_reg_.pc_plus_4 - 4) << "\",\n";
+    file << "    \"instr\": \"" << format_hex(if_id_reg_.instruction) << "\",\n";
+    file << "    \"predictedTaken\": " << format_bool(if_id_reg_.predictedTaken) << ",\n";
+    file << "    \"valid\": " << format_bool(if_id_reg_.valid) << "\n";
+    file << "  },\n";
+
+    // --- ID/EX Stage ---
+    file << "  \"ID_EX\": {\n";
+    file << "    \"CurrentPC\": \"" << format_hex(id_ex_reg_.currentPC) << "\",\n";
+    file << "    \"pc_plus_4\": \"" << format_hex(id_ex_reg_.pc_plus_4) << "\",\n";
+    file << "    \"rd\": \"" << std::dec << (int)id_ex_reg_.rd << "\",\n";
+    file << "    \"rs1\": \"" << std::dec << (int)id_ex_reg_.rs1_idx << "\",\n";
+    file << "    \"rs2\": \"" << std::dec << (int)id_ex_reg_.rs2_idx << "\",\n";
+    file << "    \"reg1_value\": \"" << format_hex(id_ex_reg_.reg1_value) << "\",\n";
+    file << "    \"reg2_value\": \"" << format_hex(id_ex_reg_.reg2_value) << "\",\n";
+    file << "    \"imm\": \"" << std::dec << id_ex_reg_.immediate << "\",\n";
+    file << "    \"funct3\": \"" << format_hex8(id_ex_reg_.funct3) << "\",\n";
+    
+    // Control Signals
+    file << "    \"RegWrite\": " << format_bool(id_ex_reg_.RegWrite) << ",\n";
+    file << "    \"MemRead\": " << format_bool(id_ex_reg_.MemRead) << ",\n";
+    file << "    \"MemWrite\": " << format_bool(id_ex_reg_.MemWrite) << ",\n";
+    file << "    \"MemToReg\": " << format_bool(id_ex_reg_.MemToReg) << ",\n";
+    file << "    \"AluSrc\": " << format_bool(id_ex_reg_.AluSrc) << ",\n";
+    file << "    \"AluOperation\": \"" << format_alu_op(id_ex_reg_.AluOperation) << "\",\n";
+    file << "    \"isBranch\": " << format_bool(id_ex_reg_.isBranch) << ",\n";
+    file << "    \"isJAL\": " << format_bool(id_ex_reg_.isJAL) << ",\n";
+    file << "    \"isJump\": " << format_bool(id_ex_reg_.isJump) << ",\n";
+    
+    // New Prediction Signals
+    file << "    \"isMisPredicted\": " << format_bool(id_ex_reg_.isMisPredicted) << ",\n"; // NEW
+    file << "    \"actualTargetPC\": \"" << format_hex(id_ex_reg_.actualTargetPC) << "\",\n"; // NEW
+    
+    file << "    \"valid\": " << format_bool(id_ex_reg_.valid) << "\n";
+    file << "  },\n";
+
+    // --- EX/MEM Stage ---
+    file << "  \"EX_MEM\": {\n";
+
+    // Control Signals
+    file << "    \"RegWrite\": " << format_bool(ex_mem_reg_.RegWrite) << ",\n";
+    file << "    \"mem_write\": " << format_bool(ex_mem_reg_.MemWrite) << ",\n";
+    file << "    \"mem_read\": " << format_bool(ex_mem_reg_.MemRead) << ",\n";
+    file << "    \"MemToReg\": " << format_bool(ex_mem_reg_.MemToReg) << ",\n";
+
+    // Data Signals
+    file << "    \"alu_result\": \"" << format_hex(ex_mem_reg_.alu_result) << "\",\n";
+    file << "    \"rd\": \"" << std::dec << (int)ex_mem_reg_.rd << "\",\n";
+    file << "    \"reg2_value\": \"" << format_hex(ex_mem_reg_.reg2_value) << "\",\n";
+    file << "    \"funct3\": \"" << format_hex8(ex_mem_reg_.funct3) << "\",\n";
+
+    // Control Hazard Signals
+    file << "    \"isControlHazard\": " << format_bool(ex_mem_reg_.isControlHazard) << ",\n";
+    file << "    \"targetPC\": \"" << format_hex(ex_mem_reg_.targetPC) << "\",\n";
+
+    file << "    \"valid\": " << format_bool(ex_mem_reg_.valid) << "\n";
+    file << "  },\n";
+
+    // --- MEM/WB Stage ---
+    file << "  \"MEM_WB\": {\n";
+
+    // Control Signals
+    file << "    \"RegWrite\": " << format_bool(mem_wb_reg_.RegWrite) << ",\n";
+    file << "    \"MemToReg\": " << format_bool(mem_wb_reg_.MemToReg) << ",\n";
+
+    // Data Signals
+    file << "    \"alu_result\": \"" << format_hex(mem_wb_reg_.alu_result) << "\",\n";
+    file << "    \"mem_data\": \"" << format_hex(mem_wb_reg_.data_from_memory) << "\",\n";
+    file << "    \"rd\": \"" << std::dec << (int)mem_wb_reg_.rd << "\",\n";
+
+    file << "    \"valid\": " << format_bool(mem_wb_reg_.valid) << "\n";
+    file << "  }\n";
+
+    file << "}\n";
+    file.close();
+
+}
 
 void RV5SVM::Redo() {
 
@@ -1159,5 +1284,6 @@ void RV5SVM::Redo() {
     output_status_ = "VM_REDO_COMPLETED";
     DumpState(globals::vm_state_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
+    DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
 }
