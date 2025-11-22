@@ -75,14 +75,6 @@ class RV5SVM : public VmBase {
         // the flag that pipelineDecode will use to tell pipelineStep whether to stall or not
         bool id_stall_ = false;
 
-        // Control Hazard Signals
-        bool PCFromEX_ = false; // Flag for whether to update PC from EX stage (mispredicted branch)
-        uint64_t PCTarget_ = 0; // Target PC from EX stage
-
-        // Signals From ID to Pipeline Step for Static Branch Prediction
-        bool IDPredictTaken_ = false;
-        uint64_t IDBranchTarget_ = 0;
-
         // For 1-Bit Branch Prediction
         // Branch History Table: maps PC addresses to prediction bits
         std::unordered_map<uint64_t, bool> branch_history_table_;

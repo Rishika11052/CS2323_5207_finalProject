@@ -1,6 +1,0 @@
-/home/rishika/CArch/finalproject_5207/build/CMakeFiles/vm.dir
-/home/rishika/CArch/finalproject_5207/build/CMakeFiles/run.dir
-/home/rishika/CArch/finalproject_5207/build/CMakeFiles/debug.dir
-/home/rishika/CArch/finalproject_5207/build/CMakeFiles/valgrind.dir
-/home/rishika/CArch/finalproject_5207/build/CMakeFiles/edit_cache.dir
-/home/rishika/CArch/finalproject_5207/build/CMakeFiles/rebuild_cache.dir

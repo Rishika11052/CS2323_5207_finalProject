@@ -1,72 +1,58 @@
-# Tests: BEQ, BNE, BLT, BGE
+# Tests: BEQ, BNE, BLT, BGE with data hazards and
+# "poison pill" instructions to verify flush logic.
 .text
+    # --- Setup ---
+    lui x5, 0x10000 
+    addi x3, x0, 20
+    addi x4, x0, 30
+    
+    # --- Test 1: BEQ (Taken) with EX -> EX Forwarding ---
+    # 'beq' needs x1 and x2 right after they're written.
     addi x1, x0, 10
     addi x2, x0, 10
-    addi x3, x0, 20
-    
-    # BEQ
-    addi x10, x0, 0
-    beq  x1, x2, target1 # Should take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x10, x0, 1     # Should skip
+    beq x1, x2, target1 # TAKEN. Needs x1 (from MEM) and x2 (from EX)
+    addi x10, x0, 1     # "Poison Pill 1" (flushed in Mode 3+)
 target1:
-    addi x10, x10, 2    # x10 = 2
     
-    beq x1, x3, target2 # Should not take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x10, x10, 4    # Should run. x10 = 6
+    # --- Test 2: BEQ (Not Taken) with EX -> EX Forwarding ---
+    # Change x1 right before the branch to test forwarding.
+    addi x1, x0, 99     # x1 is now 99
+    beq x1, x3, target2 # NOT TAKEN. Needs x1 (from EX)
+    addi x11, x0, 4     # Should run in all modes. x11 = 4
 target2:
     
-    # BNE
-    addi x11, x0, 0
-    bne x1, x3, target3 # Should take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x11, x0, 1     # Should skip
+    # --- Test 3: BNE (Taken) with MEM -> EX Forwarding ---
+    # Add a nop to force a MEM-stage forward.
+    addi x1, x0, 10     # x1 is 10
+    bne x1, x3, target3 # TAKEN (10 != 20). Needs x1 (from MEM)
+    addi x12, x0, 1     # "Poison Pill 1" (flushed in Mode 3+)
 target3:
-    addi x11, x11, 2    # x11 = 2
     
-    bne x1, x2, target4 # Should not take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x11, x11, 4    # Should run. x11 = 6
+    # --- Test 4: BNE (Not Taken) ---
+    bne x1, x2, target4 # NOT TAKEN (10 == 10)
+    addi x13, x0, 4     # Should run. x13 = 4
 target4:
     
-    # BLT
-    addi x12, x0, 0
-    blt x1, x3, target5 # (10 < 20) -> Should take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x12, x0, 1     # Should skip
+    # --- Test 5: BLT (Taken) with Load-Use STALL ---
+    # This must force a 1-cycle stall, even with forwarding.
+    sw x3, 0(x5)        # Store 20
+    lw x1, 0(x5)        # Load 20 into x1
+    blt x1, x4, target5 # TAKEN (20 < 30). Must stall 1 cycle for x1.
+    addi x14, x0, 1     # "Poison Pill 1" (flushed in Mode 3+)
 target5:
-    addi x12, x12, 2    # x12 = 2
     
-    blt x3, x1, target6 # (20 < 10) -> Should not take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x12, x12, 4    # Should run. x12 = 6
+    # --- Test 6: BLT (Not Taken) ---
+    blt x3, x1, target6 # NOT TAKEN (20 < 20 is false)
+    addi x15, x0, 4     # Should run. x15 = 4
 target6:
     
-    # BGE
-    addi x13, x0, 0
-    bge x3, x1, target7 # (20 >= 10) -> Should take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x13, x0, 1     # Should skip
+    # --- Test 7: BGE (Taken) ---
+    bge x3, x1, target7 # TAKEN (20 >= 20 is true)
+    addi x16, x0, 1     # "Poison Pill 1" (flushed in Mode 3+)
 target7:
-    addi x13, x13, 2    # x13 = 2    
-    bge x1, x3, target8 # (10 >= 20) -> Should not take
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    # addi x0, x0, 0        # NOP
-    addi x13, x13, 4    # Should run. x13 = 6
+    
+    # --- Test 8: BGE (Not Taken) with EX -> EX Forwarding ---
+    addi x1, x0, 50     # x1 is now 50
+    bge x3, x1, target8 # NOT TAKEN (20 >= 50 is false). Needs x1 (from EX)
+    addi x17, x0, 4     # Should run. x17 = 4
 target8:

@@ -11,6 +11,9 @@ struct IF_ID_Register {
     uint64_t pc_plus_4 = 0;           // PC + 4 value
     bool valid = false;               // Is the data in this register valid? (For initialization/flushing)
 
+    // Branch / Jump Prediction Signals
+    bool predictedTaken = false; // Was the branch/jump predicted taken?
+
     // Default constructor to initialize
     IF_ID_Register() : instruction(0x00000013), pc_plus_4(0), valid(false) {}
 };
@@ -33,8 +36,6 @@ struct ID_EX_Register {
     bool isJump = false;   // True for JAL, JALR
     bool isJAL  = false;    // True for JAL, False for JALR
 
-    bool predictedTaken = false; // Was the branch predicted taken?
-
     // Data (Read/Generated in Decode)
     uint64_t reg1_value = 0;      // Value from rs1
     uint64_t reg2_value = 0;      // Value from rs2 (used for R-type, B-type, S-type)
@@ -46,6 +47,10 @@ struct ID_EX_Register {
 
     // Data passed through
     uint64_t pc_plus_4 = 0;       // Passed from IF/ID (for JAL/JALR writeback)
+
+    // Store Control Hazard Signals
+    bool isMisPredicted = false;
+    uint64_t actualTargetPC = 0;
 
     bool valid = false;           // Is the data valid?
 
@@ -67,6 +72,10 @@ struct EX_MEM_Register {
     uint64_t reg2_value = 0;      // Value from rs2 (passed through for Store instructions)
     uint8_t  rd = 0;              // Destination register index (passed through)
     uint8_t  funct3 = 0;          // funct3 field (for determining load/store size)
+
+    // Store Control Hazard Signals
+    bool isControlHazard = false;
+    uint64_t targetPC = 0;
 
     bool valid = false;           // Is the data valid?
 
