@@ -404,6 +404,13 @@ void SetupConfigFile() {
   config_file << "memory_size=0xffffffffffffffff\n";
   config_file << "block_size=1024\n\n";
 
+  // --- NEW: Enable Extensions by Default ---
+  config_file << "[Assembler]\n";
+  config_file << "m_extension_enabled=true\n";
+  config_file << "f_extension_enabled=true\n";
+  config_file << "d_extension_enabled=true\n\n";
+  // -----------------------------------------
+
   config_file << "[Cache]\n";
   config_file << "cache_enabled=false\n";
   config_file << "cache_size=0\n";

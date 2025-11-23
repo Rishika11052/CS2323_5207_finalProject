@@ -133,6 +133,18 @@ int main(int argc, char *argv[]) {
                             << ", multi=0x" << val_multi << std::dec << std::endl;
               }
           }
+
+          for(int r=0 ; r<32 ; r++){
+            uint64_t val_single = single_vm->registers_.ReadFpr(r);
+            uint64_t val_multi  = multi_vm->registers_.ReadFpr(r);
+
+            if(val_single != val_multi) {
+                pass = false;
+                std::cout << "❌ Mismatch in f" << r
+                          << ": single=0x" << std::hex << val_single
+                          << ", multi=0x" << val_multi << std::dec << std::endl;
+            }
+          }
   
           // Step 6: Print result
           if (pass)
@@ -165,6 +177,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::cout << "VM_STARTED" << std::endl;
+  
   // std::cout << globals::invokation_path << std::endl;
 
   std::thread vm_thread;

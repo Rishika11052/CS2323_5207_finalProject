@@ -21,7 +21,7 @@ struct IF_ID_Register {
 // --- ID/EX Register ---
 // Holds the output of Decode, needed by Execute.
 struct ID_EX_Register {
-    
+      
     // Control Signals (Generated in Decode)
     bool RegWrite = false;
     bool MemRead = false;
@@ -30,6 +30,11 @@ struct ID_EX_Register {
     bool AluSrc = false;   // Decides ALU operand B source (Reg2 or Imm)
     alu::AluOp AluOperation = alu::AluOp::kNone; // Specific ALU operation
 
+    uint8_t rm = 0;          // Rounding Mode
+    bool Rs1IsFPR = false;   // Does Reg1 come from the Float Register File?
+    bool Rs2IsFPR = false;   // Does Reg2 come from the Float Register File?
+    bool RdIsFPR  = false;   // Does destination register go to the Float Register File?
+    bool isDouble = false;
     // Branch Control
     uint64_t currentPC = 0; // Current PC value
     bool isBranch = false; // True for BEQ, BNE, etc.
@@ -61,11 +66,16 @@ struct ID_EX_Register {
 // --- EX/MEM Register ---
 // Holds the output of Execute, needed by Memory.
 struct EX_MEM_Register {
+
+    
     // Control Signals (Passed through from ID/EX)
     bool RegWrite = false;
     bool MemRead = false;
     bool MemWrite = false;
     bool MemToReg = false;
+
+    bool RdIsFPR = false;    // Pass through: Write to F register?
+    uint8_t fcsr_flags = 0;
 
     // Data (Calculated in Execute or passed through)
     uint64_t alu_result = 0;      // Result from ALU (used for address or WB data)
@@ -81,14 +91,19 @@ struct EX_MEM_Register {
 
     // Default constructor
     EX_MEM_Register() = default;
+    
 };
 
 // --- MEM/WB Register ---
 // Holds the output of Memory, needed by WriteBack.
 struct MEM_WB_Register {
-    // Control Signals (Passed through from EX/MEM)
+
     bool RegWrite = false;
     bool MemToReg = false;
+
+    bool RdIsFPR = false;    // Pass through: Write to F register?
+    uint8_t fcsr_flags = 0;
+    // Control Signals (Passed through from EX/MEM)
 
     // Data (Read in Memory or passed through)
     uint64_t data_from_memory = 0; // Data read by Load instructions
