@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include <common/instructions.h>
 
 
 // initializes the 5-stage virtual machine
@@ -336,24 +337,12 @@ IF_ID_Register RV5SVM::pipelineFetch() {
 }
 
 ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
-    
     ID_EX_Register result;
 
     if (!if_id_reg.valid) {
-    
-        // if it was set true by a previous cycle which is now invalid
         id_stall_ = false;
-    
         result.valid = false;
-        result.RegWrite = false;
-        result.MemRead = false;
-        result.MemWrite = false;
-        result.MemToReg = false;
-        result.AluSrc = false;
-        result.AluOperation = alu::AluOp::kNone;
-
         return result;
-
     }
 
     uint32_t instruction = if_id_reg.instruction;
@@ -362,146 +351,96 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     uint8_t funct3 = (instruction >> 12) & 0b111;
     uint8_t rs1 = (instruction >> 15) & 0b11111;
     uint8_t rs2 = (instruction >> 20) & 0b11111;
-    uint8_t funct7 = (instruction >> 25) & 0b1111111;
 
-    bool usesRS1 = (opcode != 0b0110111) && (opcode != 0b0010111) && (opcode != 0b1101111); // U-type and JAL instructions do not use rs1
-    bool usesRS2 = (opcode == 0b0100011) || (opcode == 0b0110011) || (opcode == 0b1100011); // S-type, R-type, B-type use rs2
+    // --- 1. Identify Operand Types [NEW] ---
+    bool Rs1IsFPR = control_unit_.IsRs1FPR(instruction);
+    bool Rs2IsFPR = control_unit_.IsRs2FPR(instruction);
+    bool RdIsFPR  = control_unit_.IsRdFPR(instruction);
+    bool isDouble = instruction_set::isDInstruction(instruction);
 
-    //Hazard Detection
-    if(vm_config::config.isHazardDetectionEnabled() && (vm_config::config.branch_prediction_type == vm_config::BranchPredictionType::NONE || (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011))) { // Exclude JAL and JALR and Branch from hazard detection when branch prediction is enabled
+    bool usesRS1 = (opcode != 0b0110111) && (opcode != 0b0010111) && (opcode != 0b1101111);
+    bool usesRS2 = (opcode == 0b0100011) || (opcode == 0b0110011) || (opcode == 0b1100011) 
+                   || (opcode == 0b0100111) || (opcode == 0b1010011); // Added Store-FP & Op-FP
 
-        //check if the instruction in EX stage is valid, if its a load instruction, if its not x0 and if rd = rs1 or rs2 of current instruction
-        bool isRS1LoadUseHazard = usesRS1 && id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1);
-        bool isRS2LoadUseHazard = usesRS2 && id_ex_reg_.valid && id_ex_reg_.MemRead && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs2);
-        bool isLoadUseHazard = isRS1LoadUseHazard || isRS2LoadUseHazard;
-        if(isLoadUseHazard){
-            //stall so set flag to true
-            id_stall_ = true;
-
-            // Increment stall cycles
-            stall_cycles_++;
-            std::cout << "Load-Use Hazard Detected: Stalling pipeline." << std::endl;
-
-            //return a bubble
-            return ID_EX_Register();
-    
-        }
-
-        if (!vm_config::config.isForwardingEnabled()) {
-
-            // Check for hazards from EX stage (when forwarding is disabled)
-            // If the instruction in EX stage is valid, writes to a register, not x0, and its rd matches rs1 or rs2 of current instruction
-            bool isRS1HazardFromEXStage = usesRS1 && id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs1);
-            bool isRS2HazardFromEXStage = usesRS2 && id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && (id_ex_reg_.rd == rs2);
-            bool isHazardFromEXStage = isRS1HazardFromEXStage || isRS2HazardFromEXStage;
-
-            if (isHazardFromEXStage) {
-                // Stall due to hazard
+    // --- 2. Hazard Detection ---
+    if(vm_config::config.isHazardDetectionEnabled() && (vm_config::config.branch_prediction_type == vm_config::BranchPredictionType::NONE || (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011))) {
+        
+        // Generic Hazard Check (Works for both Int and Float because we check Register Index AND Type)
+        // Check ID/EX (1 cycle ahead)
+        if (id_ex_reg_.valid && id_ex_reg_.rd != 0) {
+            bool hazard1 = usesRS1 && (id_ex_reg_.rd == rs1) && (id_ex_reg_.RdIsFPR == Rs1IsFPR); // Match Index AND Type
+            bool hazard2 = usesRS2 && (id_ex_reg_.rd == rs2) && (id_ex_reg_.RdIsFPR == Rs2IsFPR);
+            
+            if (id_ex_reg_.MemRead && (hazard1 || hazard2)) {
                 id_stall_ = true;
-
-                // Increment stall cycles
                 stall_cycles_++;
-                std::cout << "Hazard Detected from EX Stage (Forwarding Disabled): Stalling pipeline." << std::endl;
-
-                // Return a bubble
-                return ID_EX_Register();
+                return ID_EX_Register(); // Stall for Load-Use
             }
 
-            // Check for hazards from MEM stage (when forwarding is disabled)
-            // If the instruction in MEM stage is valid, writes to a register, not x0, and its rd matches rs1 or rs2 of current instruction
-            bool isRS1HazardFromMemStage = usesRS1 && ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0 && (ex_mem_reg_.rd == rs1);
-            bool isRS2HazardFromMemStage = usesRS2 && ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0 && (ex_mem_reg_.rd == rs2);
-            bool isHazardFromMemStage = isRS1HazardFromMemStage || isRS2HazardFromMemStage;
-
-            if (isHazardFromMemStage) {
-                // Stall due to hazard
+            if (!vm_config::config.isForwardingEnabled()) {
+                if (id_ex_reg_.RegWrite && (hazard1 || hazard2)) {
+                    id_stall_ = true;
+                    stall_cycles_++;
+                    return ID_EX_Register(); // Stall for RAW
+                }
+            }
+        }
+        
+        // Check EX/MEM (2 cycles ahead) - Only needed if forwarding is disabled
+        if (!vm_config::config.isForwardingEnabled() && ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
+            bool hazard1 = usesRS1 && (ex_mem_reg_.rd == rs1) && (ex_mem_reg_.RdIsFPR == Rs1IsFPR);
+            bool hazard2 = usesRS2 && (ex_mem_reg_.rd == rs2) && (ex_mem_reg_.RdIsFPR == Rs2IsFPR);
+            if (hazard1 || hazard2) {
                 id_stall_ = true;
-
-                // Increment stall cycles
                 stall_cycles_++;
-                std::cout << "Hazard Detected from MEM Stage (Forwarding Disabled): Stalling pipeline." << std::endl;
-
-                // Return a bubble
                 return ID_EX_Register();
             }
-
         }
-
     }
 
-    //no hazard or hazard detection is disabled
     id_stall_ = false;
-
-    //Data Forwarding
-    //default set to no forwarding
     forward_a_ = ForwardSource::kNone;
     forward_b_ = ForwardSource::kNone;
 
-    // check if forwarding is enabled
-    if(vm_config::config.isForwardingEnabled() && (vm_config::config.branch_prediction_type == vm_config::BranchPredictionType::NONE || (opcode != 0b1101111 && opcode != 0b1100111 && opcode != 0b1100011))) { // Exclude JAL and JALR and Branch from forwarding when branch prediction is enabled
-        
-        // --- Check for hazards from EX/MEM stage ---
-        // (This data is from 2 cycles ago, so let it be overridden by newer data from ID/EX stage)
+    // --- 3. Forwarding Logic [UPDATED] ---
+    if(vm_config::config.isForwardingEnabled()) {
+        // EX/MEM Hazard (2 cycles ago)
         if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
-            
-            if (ex_mem_reg_.rd == rs1 && usesRS1) {
-                // std::cout << "Forwarding Check from EX/MEM Stage: EX/MEM.rd = " << static_cast<int>(ex_mem_reg_.rd) << ", rs1 = " << static_cast<int>(rs1) << std::endl;
+            // Forward only if types match (Int->Int or Float->Float)
+            if (usesRS1 && ex_mem_reg_.rd == rs1 && (ex_mem_reg_.RdIsFPR == Rs1IsFPR)) {
                 forward_a_ = ForwardSource::kFromMemWb;
             }
-            if (ex_mem_reg_.rd == rs2 && usesRS2) {
-                // std::cout << "Forwarding Check from EX/MEM Stage: EX/MEM.rd = " << static_cast<int>(ex_mem_reg_.rd) << ", rs2 = " << static_cast<int>(rs2) << std::endl;
+            if (usesRS2 && ex_mem_reg_.rd == rs2 && (ex_mem_reg_.RdIsFPR == Rs2IsFPR)) {
                 forward_b_ = ForwardSource::kFromMemWb;
             }
         }
-
-        // --- Check for hazards from ID/EX stage ---
-        // (This data is from 1 cycle ago, so it has the highest priority, so let it override previous forwarding decisions)
-        if (id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0) {
-
-            // Forward from ID/EX only if it's not a load instruction
-            if (!id_ex_reg_.MemRead) { 
-                if (id_ex_reg_.rd == rs1 && usesRS1) {
-                    // std::cout << "Forwarding Check from ID/EX Stage: ID/EX.rd = " << static_cast<int>(id_ex_reg_.rd) << ", rs1 = " << static_cast<int>(rs1) << std::endl;
-                    forward_a_ = ForwardSource::kFromExMem;
-                }
-                if (id_ex_reg_.rd == rs2 && usesRS2) {
-                    // std::cout << "Forwarding Check from ID/EX Stage: ID/EX.rd = " << static_cast<int>(id_ex_reg_.rd) << ", rs2 = " << static_cast<int>(rs2) << std::endl;
-                    forward_b_ = ForwardSource::kFromExMem;
-                }
+        // ID/EX Hazard (1 cycle ago) - Higher Priority
+        if (id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0 && !id_ex_reg_.MemRead) {
+            if (usesRS1 && id_ex_reg_.rd == rs1 && (id_ex_reg_.RdIsFPR == Rs1IsFPR)) {
+                forward_a_ = ForwardSource::kFromExMem;
+            }
+            if (usesRS2 && id_ex_reg_.rd == rs2 && (id_ex_reg_.RdIsFPR == Rs2IsFPR)) {
+                forward_b_ = ForwardSource::kFromExMem;
             }
         }
-        
     }
-    result.immediate = ImmGenerator(instruction);
 
+    // --- 4. Read Registers (GPR vs FPR) [NEW] ---
+    result.immediate = ImmGenerator(instruction);
     try {
-        result.reg1_value = registers_.ReadGpr(rs1);
-        result.reg2_value = registers_.ReadGpr(rs2);
-    } catch (const std::out_of_range& e) {
-        std::cerr << "Runtime Error: Decode failed reading registers for instruction 0x" << std::hex << instruction << " - " << e.what() << std::dec << std::endl;
+        if (Rs1IsFPR) result.reg1_value = registers_.ReadFpr(rs1);
+        else          result.reg1_value = registers_.ReadGpr(rs1);
+
+        if (Rs2IsFPR) result.reg2_value = registers_.ReadFpr(rs2);
+        else          result.reg2_value = registers_.ReadGpr(rs2);
+    } catch (const std::exception& e) {
         result.valid = false;
-        result.RegWrite = false;
-        result.MemRead = false;
-        result.MemWrite = false;
-        result.MemToReg = false;
-        result.AluSrc = false;
-        result.AluOperation = alu::AluOp::kNone;
         return result;
     }
 
+    // --- 5. Populate Result ---
     control_unit_.GenerateSignalForInstruction(instruction);
-
-    // Set control signals for branch instructions
-    result.currentPC = if_id_reg.pc_plus_4 - 4; // Current PC is PC + 4 - 4 = PC
-    result.isBranch = control_unit_.GetBranch(); // True for branch instructions
-    result.isJAL = (opcode == 0b1101111); // True for JAL, False for JALR
-    result.isJump = (result.isJAL || opcode == 0b1100111); // JAL or JALR
-
-    // Default Branch Resolution Signals
-    result.isMisPredicted = false;
-    result.actualTargetPC = 0;
     
-    // Set remaining control signals
     result.RegWrite = control_unit_.GetRegWrite();
     result.MemRead = control_unit_.GetMemRead();
     result.MemWrite = control_unit_.GetMemWrite();
@@ -514,6 +453,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     result.rs2_idx = rs2;
     result.pc_plus_4 = if_id_reg.pc_plus_4;
     result.funct3 = funct3;
+
     result.instruction = if_id_reg.instruction;
     result.sequence_id = if_id_reg.sequence_id;
 
@@ -598,6 +538,13 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
             }
 
         }
+        
+        
+        // Control Flow (Existing logic)
+        result.currentPC = if_id_reg.pc_plus_4 - 4;
+        result.isBranch = control_unit_.GetBranch(); 
+        result.isJAL = (opcode == 0b1101111);
+        result.isJump = (result.isJAL || opcode == 0b1100111);
 
         bool actualTaken = false;
         uint64_t actualTargetPC = 0;
@@ -680,10 +627,17 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
     }
 
+
+    // Pass Float Signals
+    result.rm = funct3; // Rounding mode usually in funct3
+    result.Rs1IsFPR = Rs1IsFPR;
+    result.Rs2IsFPR = Rs2IsFPR;
+    result.RdIsFPR  = RdIsFPR;
+    result.isDouble = isDouble;
+
     result.valid = true;
 
     return result;
-
 }
 
 EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
@@ -696,9 +650,13 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     result.MemWrite = id_ex_reg.MemWrite;
     result.MemToReg = id_ex_reg.MemToReg;
     result.rd = id_ex_reg.rd;
+
     result.currentPC = id_ex_reg.currentPC;
     result.instruction = id_ex_reg.instruction;
     result.sequence_id = id_ex_reg.sequence_id;
+
+    result.RdIsFPR = id_ex_reg.RdIsFPR;
+    result.fcsr_flags = 0;
 
     // Set Default Control Hazard Signals
     result.isControlHazard = false;
@@ -758,11 +716,38 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
         // std::cout << "Using register value for operand B: Value = 0x" << std::hex << operand_b << std::dec << std::endl;
     }
 
-    uint64_t ALUResult = 0;
-    bool overflow = false;
+    bool isFloatOp = (id_ex_reg.Rs1IsFPR || id_ex_reg.Rs2IsFPR || id_ex_reg.RdIsFPR) && !id_ex_reg.MemRead && !id_ex_reg.MemWrite; 
 
-    try {
-        std::tie(ALUResult, overflow) = alu_.execute(id_ex_reg.AluOperation, operand_a, operand_b);
+    uint64_t ALUResult = 0;
+
+    try{
+        if(isFloatOp){
+            uint8_t flags = 0;
+
+            if(id_ex_reg.isDouble){
+                std::tie(ALUResult, flags) = alu_.dfpexecute(id_ex_reg.AluOperation, operand_a, operand_b, 0, id_ex_reg.rm);
+            } else {
+                std::tie(ALUResult, flags) = alu_.fpexecute(id_ex_reg.AluOperation, operand_a, operand_b, 0, id_ex_reg.rm);
+            }
+            result.fcsr_flags = flags;
+        }else{
+            bool overflow = false;
+            std::tie(ALUResult, overflow) = alu_.execute(id_ex_reg.AluOperation, operand_a, operand_b);
+
+            if (id_ex_reg.isJump) {
+                ALUResult = id_ex_reg.currentPC + 4; // Return Address
+            }
+        
+            // LUI Case
+            if (id_ex_reg.AluOperation == alu::AluOp::kLUI) {
+                ALUResult = static_cast<uint64_t>(id_ex_reg.immediate << 12);
+            }
+        
+            // AUIPC Case
+            if (id_ex_reg.AluOperation == alu::AluOp::kAUIPC) {
+                ALUResult = id_ex_reg.currentPC + static_cast<int64_t>(id_ex_reg.immediate);
+            }
+        }
     } catch (const std::exception& e) {
         std::cerr << "Runtime Error: ALU execution failed for instruction with ALU operation " << static_cast<int>(id_ex_reg.AluOperation) << " - " << e.what() << std::endl;
         result.valid = false;
@@ -774,19 +759,6 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     }
 
     // JAL and JALR Case
-    if (id_ex_reg.isJump) {
-        ALUResult = id_ex_reg.currentPC + 4; // Return Address
-    }
-
-    // LUI Case
-    if (id_ex_reg.AluOperation == alu::AluOp::kLUI) {
-        ALUResult = static_cast<uint64_t>(id_ex_reg.immediate << 12);
-    }
-
-    // AUIPC Case
-    if (id_ex_reg.AluOperation == alu::AluOp::kAUIPC) {
-        ALUResult = id_ex_reg.currentPC + static_cast<int64_t>(id_ex_reg.immediate);
-    }
 
     // Branch Handling
 
@@ -856,77 +828,103 @@ std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Reg
     MemWriteInfo writeInfo;
     writeInfo.occurred = false;
 
+    // Pass through control signals
     result.valid = ex_mem_reg.valid;
     result.RegWrite = ex_mem_reg.RegWrite;
     result.MemToReg = ex_mem_reg.MemToReg;
     result.rd = ex_mem_reg.rd;
     result.alu_result = ex_mem_reg.alu_result;
+
     result.currentPC = ex_mem_reg.currentPC;
     result.instruction = ex_mem_reg.instruction;
     result.sequence_id = ex_mem_reg.sequence_id;
+    
+    // NEW: Pass through Float Signals
+    result.RdIsFPR = ex_mem_reg.RdIsFPR; 
+    result.fcsr_flags = ex_mem_reg.fcsr_flags;
 
-    if (!ex_mem_reg.valid) {
-        return {result, writeInfo};
-    }
+    if (!ex_mem_reg.valid) return {result, writeInfo};
 
     uint64_t memoryAddress = ex_mem_reg.alu_result;
 
+    // --- READ LOGIC ---
     if (ex_mem_reg.MemRead) {
         try {
-            switch (ex_mem_reg.funct3) {
-                case 0b000: // LB
-                    result.data_from_memory = static_cast<int64_t>(static_cast<int8_t>(memory_controller_.ReadByte(memoryAddress)));
-                    break;
-                case 0b001: // LH
-                    result.data_from_memory = static_cast<int64_t>(static_cast<int16_t>(memory_controller_.ReadHalfWord(memoryAddress)));
-                    break;
-                case 0b010: // LW
-                    result.data_from_memory = static_cast<int64_t>(static_cast<int32_t>(memory_controller_.ReadWord(memoryAddress)));
-                    break;
-                case 0b011: // LD
-                    result.data_from_memory = memory_controller_.ReadDoubleWord(memoryAddress);
-                    break;
-                case 0b100: // LBU
-                    result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadByte(memoryAddress));
-                    break;
-                case 0b101: // LHU
-                    result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadHalfWord(memoryAddress));
-                    break;
-                case 0b110: // LWU
-                    result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadWord(memoryAddress));
-                    break;
-                default:
-                    throw std::runtime_error("Invalid funct3 for load instruction");
+            // Check for Float Loads first (based on RdIsFPR, as destination is Float)
+            if (ex_mem_reg.RdIsFPR) {
+                // Determine width based on funct3 or instruction type
+                // Usually FLW=0x2 (Word), FLD=0x3 (Double) in funct3
+                switch (ex_mem_reg.funct3) {
+                    case 0b010: // FLW
+                        result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadWord(memoryAddress));
+                        break;
+                    case 0b011: // FLD
+                        result.data_from_memory = memory_controller_.ReadDoubleWord(memoryAddress);
+                        break;
+                    default:
+                        // Fallback for safety
+                        result.data_from_memory = memory_controller_.ReadDoubleWord(memoryAddress); 
+                        break;
+                }
+            } else {
+                // Existing Integer Loads (LB, LH, LW, etc.)
+                switch (ex_mem_reg.funct3) {
+                    case 0b000: // LB
+                        result.data_from_memory = static_cast<int64_t>(static_cast<int8_t>(memory_controller_.ReadByte(memoryAddress)));
+                        break;
+                    case 0b001: // LH
+                        result.data_from_memory = static_cast<int64_t>(static_cast<int16_t>(memory_controller_.ReadHalfWord(memoryAddress)));
+                        break;
+                    case 0b010: // LW
+                        result.data_from_memory = static_cast<int64_t>(static_cast<int32_t>(memory_controller_.ReadWord(memoryAddress)));
+                        break;
+                    case 0b011: // LD
+                        result.data_from_memory = memory_controller_.ReadDoubleWord(memoryAddress);
+                        break;
+                    case 0b100: // LBU
+                        result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadByte(memoryAddress));
+                        break;
+                    case 0b101: // LHU
+                        result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadHalfWord(memoryAddress));
+                        break;
+                    case 0b110: // LWU
+                        result.data_from_memory = static_cast<uint64_t>(memory_controller_.ReadWord(memoryAddress));
+                        break;
+                    default:
+                        throw std::runtime_error("Invalid funct3 for load instruction");
+                }
             }
         } catch (const std::out_of_range& e) {
             std::cerr << "Runtime Error: Memory read failed at address 0x" << std::hex << memoryAddress << " - " << e.what() << std::dec << std::endl;
             result.valid = false;
-            result.RegWrite = false;
-            result.MemToReg = false;
             return {result, writeInfo};
         }
     }
 
+    // --- WRITE LOGIC ---
     if (ex_mem_reg.MemWrite) {
         writeInfo.occurred = true;
         writeInfo.address = memoryAddress;
-
         size_t writeSize = 0;
 
+        // Determine size. For Floats, FSW is usually 0b010 (Word), FSD is 0b011 (Double)
+        // This overlaps with SW and SD, which is fine because the size is the same.
         switch (ex_mem_reg.funct3) {
             case 0b000: writeSize = 1; break; // SB
             case 0b001: writeSize = 2; break; // SH
-            case 0b010: writeSize = 4; break; // SW
-            case 0b011: writeSize = 8; break; // SD
-            default:
-                throw std::runtime_error("Invalid funct3 for store instruction");
+            case 0b010: writeSize = 4; break; // SW / FSW
+            case 0b011: writeSize = 8; break; // SD / FSD
+            default: throw std::runtime_error("Invalid funct3 for store instruction");
         }
 
         try {
+            // Save old bytes for UNDO
             writeInfo.old_bytes.resize(writeSize);
             for (size_t i = 0; i < writeSize; ++i) {
                 writeInfo.old_bytes[i] = memory_controller_.ReadByte(memoryAddress + i);
             }
+
+            // Perform Write (Data comes from reg2_value, which holds float bits if it was a float store)
             switch (ex_mem_reg.funct3) {
                 case 0b000: // SB
                     memory_controller_.WriteByte(memoryAddress, static_cast<uint8_t>(ex_mem_reg.reg2_value & 0xFF));
@@ -934,33 +932,28 @@ std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Reg
                 case 0b001: // SH
                     memory_controller_.WriteHalfWord(memoryAddress, static_cast<uint16_t>(ex_mem_reg.reg2_value & 0xFFFF));
                     break;
-                case 0b010: // SW
+                case 0b010: // SW / FSW
                     memory_controller_.WriteWord(memoryAddress, static_cast<uint32_t>(ex_mem_reg.reg2_value & 0xFFFFFFFF));
                     break;
-                case 0b011: // SD
+                case 0b011: // SD / FSD
                     memory_controller_.WriteDoubleWord(memoryAddress, ex_mem_reg.reg2_value);
                     break;
-                default:
-                    throw std::runtime_error("Invalid funct3 for store instruction");
             }
 
+            // Save new bytes for REDO
             writeInfo.new_bytes.resize(writeSize);
             for (size_t i = 0; i < writeSize; ++i) {
                 writeInfo.new_bytes[i] = memory_controller_.ReadByte(memoryAddress + i);
             }
 
         } catch (const std::out_of_range& e) {
-            std::cerr << "Runtime Error: Memory write failed at address 0x" << std::hex << memoryAddress << " - " << e.what() << std::dec << std::endl;
             result.valid = false;
-            result.RegWrite = false;
-            result.MemToReg = false;
             writeInfo.occurred = false;
             return {result, writeInfo};
         }
     }
 
     return {result, writeInfo};
-
 }
 
 WbWriteInfo RV5SVM::pipelineWriteBack(const MEM_WB_Register& mem_wb_reg) {
@@ -968,40 +961,44 @@ WbWriteInfo RV5SVM::pipelineWriteBack(const MEM_WB_Register& mem_wb_reg) {
     WbWriteInfo WBInfo;
     WBInfo.occurred = false;
 
+    // 1. SAFETY: Don't process bubbles!
     if (!mem_wb_reg.valid) {
         return WBInfo;
     }
 
-    if (mem_wb_reg.RegWrite) {
-        
-        uint64_t writeValue = 0;
-
-        if (mem_wb_reg.MemToReg) {
-            writeValue = mem_wb_reg.data_from_memory;
-        } else {
-            writeValue = mem_wb_reg.alu_result;
-        }
-
-        uint8_t destinationRegister = mem_wb_reg.rd;
-        if (destinationRegister != 0) {
-            try {
-                WBInfo.reg_type = 0;
-                WBInfo.reg_index = destinationRegister;
-                WBInfo.old_value = registers_.ReadGpr(destinationRegister);
-                registers_.WriteGpr(destinationRegister, writeValue);
-                WBInfo.new_value = writeValue;
-                WBInfo.occurred = true;
-            } catch (const std::out_of_range& e) {
-                std::cerr << "Runtime Error: WriteBack failed writing to GPR x" << static_cast<int>(destinationRegister) << " - " << e.what() << std::endl;
-                WBInfo.occurred = false;
-                return WBInfo;
-            }            
-        }
-
+    if(mem_wb_reg.fcsr_flags != 0){
+        uint64_t current_fcsr = registers_.ReadCsr(0x003);
+        registers_.WriteCsr(0x003, current_fcsr | mem_wb_reg.fcsr_flags);
     }
 
-    return WBInfo;
+    if(mem_wb_reg.RegWrite){
+        uint64_t writeValue = mem_wb_reg.MemToReg ? mem_wb_reg.data_from_memory : mem_wb_reg.alu_result;
+        uint8_t dest = mem_wb_reg.rd;
 
+        if(dest != 0 || mem_wb_reg.RdIsFPR){
+            
+            // 2. UNDO SUPPORT: Save index
+            WBInfo.reg_index = dest;
+            WBInfo.new_value = writeValue;
+
+            if(mem_wb_reg.RdIsFPR){
+                // 3. UNDO SUPPORT: Save old value
+                try { WBInfo.old_value = registers_.ReadFpr(dest); } catch (...) { WBInfo.old_value = 0; }
+                
+                registers_.WriteFpr(dest, writeValue);
+                WBInfo.reg_type = 2;
+            }else{
+                // 3. UNDO SUPPORT: Save old value
+                try { WBInfo.old_value = registers_.ReadGpr(dest); } catch (...) { WBInfo.old_value = 0; }
+                
+                registers_.WriteGpr(dest, writeValue);
+                WBInfo.reg_type = 0;
+            }
+            WBInfo.occurred = true;
+        }
+    }  
+
+    return WBInfo;
 }
 
 void RV5SVM::Run() {

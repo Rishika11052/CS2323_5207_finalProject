@@ -282,11 +282,7 @@ namespace vm_config
         config_file << "text_section_start=0x" << std::hex << getTextSectionStart() << std::dec << "\n";
         config_file << "bss_section_start=0x" << std::hex << getBssSectionStart() << std::dec << "\n\n";
 
-        config_file << "[Assembler]\n";
-        config_file << "m_extension_enabled=" << (getMExtensionEnabled() ? "true" : "false") << "\n";
-        config_file << "f_extension_enabled=" << (getFExtensionEnabled() ? "true" : "false") << "\n";
-        config_file << "d_extension_enabled=" << (getDExtensionEnabled() ? "true" : "false") << "\n\n";
-
+        
         config_file << "[Cache]\n";
         config_file << "cache_enabled=false\n";
         config_file << "cache_size=0\n";
@@ -297,6 +293,10 @@ namespace vm_config
         config_file << "cache_write_hit_policy=write_back\n";
         config_file << "cache_write_miss_policy=write_allocate\n\n";
         
+        config_file << "[Assembler]\n";
+        config_file << "m_extension_enabled=" << (getMExtensionEnabled() ? "true" : "false") << "\n";
+        config_file << "f_extension_enabled=" << (getFExtensionEnabled() ? "true" : "false") << "\n";
+        config_file << "d_extension_enabled=" << (getDExtensionEnabled() ? "true" : "false") << "\n\n";
         config_file.close();
 
     }
