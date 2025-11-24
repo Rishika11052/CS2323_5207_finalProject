@@ -10,6 +10,7 @@ struct IF_ID_Register {
     uint32_t instruction = 0x00000013; // Default to nop (addi x0, x0, 0)
     uint64_t pc_plus_4 = 0;           // PC + 4 value
     bool valid = false;               // Is the data in this register valid? (For initialization/flushing)
+    uint64_t sequence_id = 0;      // For debugging: unique ID for the instruction sequence
 
     // Branch / Jump Prediction Signals
     bool predictedTaken = false; // Was the branch/jump predicted taken?
@@ -44,6 +45,8 @@ struct ID_EX_Register {
     uint8_t  rs1_idx = 0;         // Source register 1 index (needed for forwarding later)
     uint8_t  rs2_idx = 0;         // Source register 2 index (needed for forwarding later)
     uint8_t  funct3 = 0;          // funct3 field (for branch decisions)
+    u_int32_t instruction = 0x00000013; // Instruction word
+    uint64_t sequence_id = 0;      // For debugging: unique ID for the instruction sequence
 
     // Data passed through
     uint64_t pc_plus_4 = 0;       // Passed from IF/ID (for JAL/JALR writeback)
@@ -72,6 +75,9 @@ struct EX_MEM_Register {
     uint64_t reg2_value = 0;      // Value from rs2 (passed through for Store instructions)
     uint8_t  rd = 0;              // Destination register index (passed through)
     uint8_t  funct3 = 0;          // funct3 field (for determining load/store size)
+    uint8_t  currentPC = 0;       // Current PC value (passed through)
+    u_int32_t instruction = 0x00000013; // Instruction word
+    uint64_t sequence_id = 0;      // For debugging: unique ID for the instruction sequence
 
     // Store Control Hazard Signals
     bool isControlHazard = false;
@@ -94,6 +100,9 @@ struct MEM_WB_Register {
     uint64_t data_from_memory = 0; // Data read by Load instructions
     uint64_t alu_result = 0;       // Result from ALU (passed through)
     uint8_t  rd = 0;               // Destination register index (passed through)
+    uint8_t  currentPC = 0;        // Current PC value (passed through)
+    u_int32_t instruction = 0x00000013; // Instruction word
+    uint64_t sequence_id = 0;      // For debugging: unique ID for the instruction sequence
 
     bool valid = false;            // Is the data valid?
 

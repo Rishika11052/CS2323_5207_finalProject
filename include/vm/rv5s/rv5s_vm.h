@@ -21,6 +21,12 @@ struct WbWriteInfo {
     uint64_t new_value = 0;
 };
 
+enum class ForwardSource{
+    kNone, //use the value from the register file
+    kFromExMem, // Forward from the EX/MEM pipeline register
+    kFromMemWb // forward form the MEM/WB pipeline register
+};
+
 struct MemWriteInfo {
     bool occurred = false;
     uint64_t address = 0;
@@ -43,6 +49,27 @@ struct CycleDelta {
 
     WbWriteInfo wb_write;
     MemWriteInfo mem_write;
+
+    // Other internal variables
+    bool old_id_stall = false;
+    uint64_t old_stall_cycles = 0;
+    ForwardSource old_forward_a = ForwardSource::kNone;
+    ForwardSource old_forward_b = ForwardSource::kNone;
+    ForwardSource old_forward_branch_a_ = ForwardSource::kNone;
+    ForwardSource old_forward_branch_b_ = ForwardSource::kNone;
+
+    uint64_t old_instruction_sequence_counter_ = 0;
+    uint64_t old_last_retired_sequence_id_ = 0;
+
+    bool new_id_stall = false;
+    uint64_t new_stall_cycles = 0;
+    ForwardSource new_forward_a = ForwardSource::kNone;
+    ForwardSource new_forward_b = ForwardSource::kNone;
+    ForwardSource new_forward_branch_a_ = ForwardSource::kNone;
+    ForwardSource new_forward_branch_b_ = ForwardSource::kNone;
+
+    uint64_t new_instruction_sequence_counter_ = 0;
+    uint64_t new_last_retired_sequence_id_ = 0;
     
     uint64_t new_pc = 0;
     bool instruction_retired = false;
@@ -79,14 +106,14 @@ class RV5SVM : public VmBase {
         // Branch History Table: maps PC addresses to prediction bits
         std::unordered_map<uint64_t, bool> branch_history_table_;
 
-        enum class ForwardSource{
-            kNone, //use the value from the register file
-            kFromExMem, // Forward from the EX/MEM pipeline register
-            kFromMemWb // forward form the MEM/WB pipeline register
-        };
-
         ForwardSource forward_a_ = ForwardSource::kNone;
         ForwardSource forward_b_ = ForwardSource::kNone;
+
+        ForwardSource forward_branch_a_ = ForwardSource::kNone;
+        ForwardSource forward_branch_b_ = ForwardSource::kNone;
+
+        uint64_t instruction_sequence_counter_ = 0;
+        uint64_t last_retired_sequence_id_ = 0;
         
         IF_ID_Register pipelineFetch();
         ID_EX_Register pipelineDecode(const IF_ID_Register& if_id_reg);

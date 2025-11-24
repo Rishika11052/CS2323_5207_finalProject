@@ -276,7 +276,7 @@ void VmBase::DumpState(const std::filesystem::path &filename) {
     file << "    \"stall_cycles\": " << stall_cycles_ << ",\n";
     file << "    \"branch_mispredictions\": " << branch_mispredictions_ << ",\n";
     file << "    \"breakpoints\": [";
-    for (size_t i = 1; i < breakpoints_.size(); ++i) {
+    for (size_t i = 0; i < breakpoints_.size(); ++i) {
         program_.instruction_number_line_number_mapping[breakpoints_[i] / 4];
         file << program_.instruction_number_line_number_mapping[breakpoints_[i] / 4];
         if (i < breakpoints_.size() - 1) {

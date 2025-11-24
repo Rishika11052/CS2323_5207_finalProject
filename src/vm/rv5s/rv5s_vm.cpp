@@ -69,6 +69,11 @@ void RV5SVM::Reset() {
     // Reset Forwarding Signals
     forward_a_ = ForwardSource::kNone;
     forward_b_ = ForwardSource::kNone;
+    forward_branch_a_ = ForwardSource::kNone;
+    forward_branch_b_ = ForwardSource::kNone;
+
+    instruction_sequence_counter_ = 0;
+    last_retired_sequence_id_ = 0;
 
     control_unit_.Reset();
 
@@ -97,6 +102,15 @@ void RV5SVM::PipelinedStep() {
     delta.old_id_ex_reg = id_ex_reg_;
     delta.old_ex_mem_reg = ex_mem_reg_;
     delta.old_mem_wb_reg = mem_wb_reg_;
+
+    delta.old_id_stall = id_stall_;
+    delta.old_stall_cycles = stall_cycles_;
+    delta.old_forward_a = forward_a_;
+    delta.old_forward_b = forward_b_;
+    delta.old_forward_branch_a_ = forward_branch_a_;
+    delta.old_forward_branch_b_ = forward_branch_b_;
+    delta.old_instruction_sequence_counter_ = instruction_sequence_counter_;
+    delta.old_last_retired_sequence_id_ = last_retired_sequence_id_;
     
     // flag is used to initialize the CycleDelta Object
     //when mem_wb_reg.valid is true(when WriteBack happens)
@@ -107,6 +121,9 @@ void RV5SVM::PipelinedStep() {
     WbWriteInfo WBInfo = pipelineWriteBack(mem_wb_reg_);
     if (mem_wb_reg_.valid) {
         delta.instruction_retired = true;
+        last_retired_sequence_id_ = mem_wb_reg_.sequence_id;
+    } else {
+        last_retired_sequence_id_ = 0;
     }
 
     //Run the Memory Stage
@@ -184,6 +201,15 @@ void RV5SVM::PipelinedStep() {
     delta.new_id_ex_reg = next_id_ex_reg;
     delta.new_if_id_reg = next_if_id_reg;
     delta.new_mem_wb_reg = next_mem_wb_reg;
+
+    delta.new_id_stall = id_stall_;
+    delta.new_stall_cycles = stall_cycles_;
+    delta.new_forward_a = forward_a_;
+    delta.new_forward_b = forward_b_;
+    delta.new_forward_branch_a_ = forward_branch_a_;
+    delta.new_forward_branch_b_ = forward_branch_b_;
+    delta.new_instruction_sequence_counter_ = instruction_sequence_counter_;
+    delta.new_last_retired_sequence_id_ = last_retired_sequence_id_;
 
     if (delta.instruction_retired) {
         instructions_retired_++;
@@ -302,6 +328,8 @@ IF_ID_Register RV5SVM::pipelineFetch() {
 
     // Store prediction info in IF/ID register for use in Decode stage
     result.predictedTaken = predictedTaken;
+
+    result.sequence_id = ++instruction_sequence_counter_;
 
     return result;
 
@@ -486,6 +514,11 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     result.rs2_idx = rs2;
     result.pc_plus_4 = if_id_reg.pc_plus_4;
     result.funct3 = funct3;
+    result.instruction = if_id_reg.instruction;
+    result.sequence_id = if_id_reg.sequence_id;
+
+    forward_branch_a_ = ForwardSource::kNone;
+    forward_branch_b_ = ForwardSource::kNone;
 
     // Branch Prediction Handling
     if (vm_config::config.getBranchPredictionType() != vm_config::BranchPredictionType::NONE) {
@@ -552,10 +585,12 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
                 if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && !ex_mem_reg_.MemRead && ex_mem_reg_.rd != 0) {
                     if (ex_mem_reg_.rd == rs1 && usesRS1) {
                         reg1_value = ex_mem_reg_.alu_result;
+                        forward_branch_a_ = ForwardSource::kFromExMem;
                         // std::cout << "Forwarding for Branch Resolution: RS1 from EX/MEM Stage." << std::endl;
                     }
                     if (ex_mem_reg_.rd == rs2 && usesRS2) {
                         reg2_value = ex_mem_reg_.alu_result;
+                        forward_branch_b_ = ForwardSource::kFromExMem;
                         // std::cout << "Forwarding for Branch Resolution: RS2 from EX/MEM Stage." << std::endl;
                     }
                 }
@@ -661,6 +696,9 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
     result.MemWrite = id_ex_reg.MemWrite;
     result.MemToReg = id_ex_reg.MemToReg;
     result.rd = id_ex_reg.rd;
+    result.currentPC = id_ex_reg.currentPC;
+    result.instruction = id_ex_reg.instruction;
+    result.sequence_id = id_ex_reg.sequence_id;
 
     // Set Default Control Hazard Signals
     result.isControlHazard = false;
@@ -823,6 +861,9 @@ std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Reg
     result.MemToReg = ex_mem_reg.MemToReg;
     result.rd = ex_mem_reg.rd;
     result.alu_result = ex_mem_reg.alu_result;
+    result.currentPC = ex_mem_reg.currentPC;
+    result.instruction = ex_mem_reg.instruction;
+    result.sequence_id = ex_mem_reg.sequence_id;
 
     if (!ex_mem_reg.valid) {
         return {result, writeInfo};
@@ -1029,10 +1070,12 @@ void RV5SVM::DebugRun() {
         // --- Breakpoint Check ---
         // This is the only part that's different from Run()
         // We assume 'breakpoints_' is a std::set<uint64_t> inherited from VmBase
-        if (std::find(breakpoints_.begin(), breakpoints_.end(), program_counter_) != breakpoints_.end()) {
-            std::cout << "VM_BREAKPOINT_HIT: 0x" << std::hex << program_counter_ << std::dec << std::endl;
-            output_status_ = "VM_BREAKPOINT_HIT";
-            RequestStop(); // Stop the run loop
+        if (program_counter_ < program_size_) {
+            if (std::find(breakpoints_.begin(), breakpoints_.end(), program_counter_) != breakpoints_.end()) {
+                std::cout << "VM_BREAKPOINT_HIT: 0x" << std::hex << program_counter_ << std::dec << std::endl;
+                output_status_ = "VM_BREAKPOINT_HIT";
+                RequestStop(); // Stop the run loop
+            }
         }
         // --- End of Breakpoint Check ---
     }
@@ -1069,6 +1112,15 @@ void RV5SVM::Undo() {
     id_ex_reg_  = last.old_id_ex_reg;
     ex_mem_reg_ = last.old_ex_mem_reg;
     mem_wb_reg_ = last.old_mem_wb_reg;
+
+    id_stall_ = last.old_id_stall;
+    stall_cycles_ = last.old_stall_cycles;
+    forward_a_ = last.old_forward_a;
+    forward_b_ = last.old_forward_b;
+    forward_branch_a_ = last.old_forward_branch_a_;
+    forward_branch_b_ = last.old_forward_branch_b_;
+    instruction_sequence_counter_ = last.old_instruction_sequence_counter_;
+    last_retired_sequence_id_ = last.old_last_retired_sequence_id_;
 
     //checks if the last cycle resulted in a register write
     //if true then restores the register value to the value that it stored before the cycle
@@ -1146,20 +1198,42 @@ void RV5SVM::DumpPipelineRegisters(const std::filesystem::path &filename) {
         return ss.str();
     };
 
+    auto get_line_num = [&](uint64_t pc) -> int {
+        // PC is in bytes, map uses instruction index (PC / 4)
+        uint32_t instr_index = static_cast<uint32_t>(pc / 4);
+        if (program_.instruction_number_line_number_mapping.count(instr_index)) {
+            return program_.instruction_number_line_number_mapping[instr_index];
+        }
+        return -1; // Unknown line
+    };
+
+    auto format_fwd = [](ForwardSource src) {
+        switch (src) {
+            case ForwardSource::kNone: return "None";
+            case ForwardSource::kFromExMem: return "ExMem";
+            case ForwardSource::kFromMemWb: return "MemWb";
+            default: return "None";
+        }
+    };
+
     file << "{\n";
 
     // --- IF/ID Stage ---
+    uint64_t IF_PC = if_id_reg_.pc_plus_4 - 4;
     file << "  \"IF_ID\": {\n";
-    file << "    \"pc\": \"" << format_hex(if_id_reg_.pc_plus_4 - 4) << "\",\n";
-    file << "    \"instr\": \"" << format_hex(if_id_reg_.instruction) << "\",\n";
+    file << "    \"pc\": \"" << format_hex(IF_PC) << "\",\n";
+    file << "    \"line\": " << get_line_num(IF_PC) << ",\n";
+    file << "    \"instr\": \"" << format_hex32(if_id_reg_.instruction) << "\",\n";
     file << "    \"predictedTaken\": " << format_bool(if_id_reg_.predictedTaken) << ",\n";
+    file << "    \"isStalled\": " << format_bool(id_stall_) << ",\n";
+    file << "    \"seq_id\": \"" << if_id_reg_.sequence_id << "\",\n";
     file << "    \"valid\": " << format_bool(if_id_reg_.valid) << "\n";
     file << "  },\n";
 
     // --- ID/EX Stage ---
     file << "  \"ID_EX\": {\n";
     file << "    \"CurrentPC\": \"" << format_hex(id_ex_reg_.currentPC) << "\",\n";
-    file << "    \"pc_plus_4\": \"" << format_hex(id_ex_reg_.pc_plus_4) << "\",\n";
+    file << "    \"line\": " << get_line_num(id_ex_reg_.currentPC) << ",\n";
     file << "    \"rd\": \"" << std::dec << (int)id_ex_reg_.rd << "\",\n";
     file << "    \"rs1\": \"" << std::dec << (int)id_ex_reg_.rs1_idx << "\",\n";
     file << "    \"rs2\": \"" << std::dec << (int)id_ex_reg_.rs2_idx << "\",\n";
@@ -1167,6 +1241,14 @@ void RV5SVM::DumpPipelineRegisters(const std::filesystem::path &filename) {
     file << "    \"reg2_value\": \"" << format_hex(id_ex_reg_.reg2_value) << "\",\n";
     file << "    \"imm\": \"" << std::dec << id_ex_reg_.immediate << "\",\n";
     file << "    \"funct3\": \"" << format_hex8(id_ex_reg_.funct3) << "\",\n";
+    file << "    \"instr\": \"" << format_hex32(id_ex_reg_.instruction) << "\",\n";
+    file << "    \"seq_id\": \"" << id_ex_reg_.sequence_id << "\",\n";
+
+    // Forwarding Sources
+    file << "    \"forward_a\": \"" << format_fwd(forward_a_) << "\",\n";
+    file << "    \"forward_b\": \"" << format_fwd(forward_b_) << "\",\n";
+    file << "    \"forward_branch_a\": \"" << format_fwd(forward_branch_a_) << "\",\n";
+    file << "    \"forward_branch_b\": \"" << format_fwd(forward_branch_b_) << "\",\n";
     
     // Control Signals
     file << "    \"RegWrite\": " << format_bool(id_ex_reg_.RegWrite) << ",\n";
@@ -1196,10 +1278,14 @@ void RV5SVM::DumpPipelineRegisters(const std::filesystem::path &filename) {
     file << "    \"MemToReg\": " << format_bool(ex_mem_reg_.MemToReg) << ",\n";
 
     // Data Signals
+    file << "    \"CurrentPC\": \"" << format_hex(ex_mem_reg_.currentPC) << "\",\n";
+    file << "    \"line\": " << get_line_num(ex_mem_reg_.currentPC) << ",\n";
     file << "    \"alu_result\": \"" << format_hex(ex_mem_reg_.alu_result) << "\",\n";
     file << "    \"rd\": \"" << std::dec << (int)ex_mem_reg_.rd << "\",\n";
     file << "    \"reg2_value\": \"" << format_hex(ex_mem_reg_.reg2_value) << "\",\n";
     file << "    \"funct3\": \"" << format_hex8(ex_mem_reg_.funct3) << "\",\n";
+    file << "    \"instr\": \"" << format_hex32(ex_mem_reg_.instruction) << "\",\n";
+    file << "    \"seq_id\": \"" << ex_mem_reg_.sequence_id << "\",\n";
 
     // Control Hazard Signals
     file << "    \"isControlHazard\": " << format_bool(ex_mem_reg_.isControlHazard) << ",\n";
@@ -1216,11 +1302,19 @@ void RV5SVM::DumpPipelineRegisters(const std::filesystem::path &filename) {
     file << "    \"MemToReg\": " << format_bool(mem_wb_reg_.MemToReg) << ",\n";
 
     // Data Signals
+    file << "    \"CurrentPC\": \"" << format_hex(mem_wb_reg_.currentPC) << "\",\n";
+    file << "    \"line\": " << get_line_num(mem_wb_reg_.currentPC) << ",\n";
     file << "    \"alu_result\": \"" << format_hex(mem_wb_reg_.alu_result) << "\",\n";
     file << "    \"mem_data\": \"" << format_hex(mem_wb_reg_.data_from_memory) << "\",\n";
     file << "    \"rd\": \"" << std::dec << (int)mem_wb_reg_.rd << "\",\n";
+    file << "    \"instr\": \"" << format_hex32(mem_wb_reg_.instruction) << "\",\n";
+    file << "    \"seq_id\": \"" << mem_wb_reg_.sequence_id << "\",\n";
 
     file << "    \"valid\": " << format_bool(mem_wb_reg_.valid) << "\n";
+    file << "  },\n";
+
+    file << "  \"Retired\": {\n";
+    file << "    \"seq_id\": " << last_retired_sequence_id_ << "\n";
     file << "  }\n";
 
     file << "}\n";
@@ -1249,6 +1343,14 @@ void RV5SVM::Redo() {
     id_ex_reg_  = next.new_id_ex_reg;
     ex_mem_reg_ = next.new_ex_mem_reg;
     mem_wb_reg_ = next.new_mem_wb_reg;
+
+    id_stall_ = next.new_id_stall;
+    stall_cycles_ = next.new_stall_cycles;
+    forward_a_ = next.new_forward_a;
+    forward_b_ = next.new_forward_b;
+    forward_branch_a_ = next.new_forward_branch_a_;
+    forward_branch_b_ = next.new_forward_branch_b_;
+    instruction_sequence_counter_ = next.new_instruction_sequence_counter_;
     
     // check if a register write occurred in this cycle
     // if it did then update the value of the register with the new value
