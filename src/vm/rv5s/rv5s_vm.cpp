@@ -358,7 +358,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     bool RdIsFPR  = control_unit_.IsRdFPR(instruction);
     bool isDouble = instruction_set::isDInstruction(instruction);
 
-    bool usesRS1 = (opcode != 0b0110111) && (opcode != 0b0010111) && (opcode != 0b1101111);
+    bool usesRS1 = (opcode != 0b0110111) && (opcode != 0b0010111) && (opcode != 0b1101111); 
     bool usesRS2 = (opcode == 0b0100011) || (opcode == 0b0110011) || (opcode == 0b1100011) 
                    || (opcode == 0b0100111) || (opcode == 0b1010011); // Added Store-FP & Op-FP
 
@@ -447,6 +447,12 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     result.MemToReg = control_unit_.GetMemToReg();
     result.AluSrc = control_unit_.GetAluSrc();
     result.AluOperation = control_unit_.GetAluOperation(instruction);
+    
+    // Control Flow (Existing logic)
+    result.currentPC = if_id_reg.pc_plus_4 - 4;
+    result.isBranch = control_unit_.GetBranch(); 
+    result.isJAL = (opcode == 0b1101111);
+    result.isJump = (result.isJAL || opcode == 0b1100111);
 
     result.rd = rd;
     result.rs1_idx = rs1;
@@ -473,8 +479,8 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
                 bool hazardFromEX = false;
                 // Check for hazards from EX stage
                 if (id_ex_reg_.valid && id_ex_reg_.RegWrite && id_ex_reg_.rd != 0) {
-                    if (usesRS1 && id_ex_reg_.rd == rs1) hazardFromEX = true;
-                    if (usesRS2 && id_ex_reg_.rd == rs2) hazardFromEX = true;
+                    if (usesRS1 && id_ex_reg_.rd == rs1 && (id_ex_reg_.RdIsFPR == Rs1IsFPR)) hazardFromEX = true;
+                    if (usesRS2 && id_ex_reg_.rd == rs2 && (id_ex_reg_.RdIsFPR == Rs2IsFPR)) hazardFromEX = true;
                 }
 
                 if (hazardFromEX) {
@@ -487,8 +493,8 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                 bool loadHazardFromMem = false;
                 if (ex_mem_reg_.valid && ex_mem_reg_.MemRead && ex_mem_reg_.RegWrite && ex_mem_reg_.rd != 0) {
-                    if (usesRS1 && ex_mem_reg_.rd == rs1) loadHazardFromMem = true;
-                    if (usesRS2 && ex_mem_reg_.rd == rs2) loadHazardFromMem = true;
+                    if (usesRS1 && ex_mem_reg_.rd == rs1 && (ex_mem_reg_.RdIsFPR == Rs1IsFPR)) loadHazardFromMem = true;
+                    if (usesRS2 && ex_mem_reg_.rd == rs2 && (ex_mem_reg_.RdIsFPR == Rs2IsFPR)) loadHazardFromMem = true;
                 }
 
                 if (loadHazardFromMem) {
@@ -503,8 +509,8 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                     bool ALUHazardFromMem = false;
                     if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && !ex_mem_reg_.MemRead && ex_mem_reg_.rd != 0) {
-                        if (usesRS1 && ex_mem_reg_.rd == rs1) ALUHazardFromMem = true;
-                        if (usesRS2 && ex_mem_reg_.rd == rs2) ALUHazardFromMem = true;
+                        if (usesRS1 && ex_mem_reg_.rd == rs1 && (ex_mem_reg_.RdIsFPR == Rs1IsFPR)) ALUHazardFromMem = true;
+                        if (usesRS2 && ex_mem_reg_.rd == rs2 && (ex_mem_reg_.RdIsFPR == Rs2IsFPR)) ALUHazardFromMem = true;
                     }
 
                     if (ALUHazardFromMem) {
@@ -523,12 +529,12 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
 
                 // Forwarded values for branch resolution
                 if (ex_mem_reg_.valid && ex_mem_reg_.RegWrite && !ex_mem_reg_.MemRead && ex_mem_reg_.rd != 0) {
-                    if (ex_mem_reg_.rd == rs1 && usesRS1) {
+                    if (ex_mem_reg_.rd == rs1 && usesRS1 && (ex_mem_reg_.RdIsFPR == Rs1IsFPR)) {
                         reg1_value = ex_mem_reg_.alu_result;
                         forward_branch_a_ = ForwardSource::kFromExMem;
                         // std::cout << "Forwarding for Branch Resolution: RS1 from EX/MEM Stage." << std::endl;
                     }
-                    if (ex_mem_reg_.rd == rs2 && usesRS2) {
+                    if (ex_mem_reg_.rd == rs2 && usesRS2 && (ex_mem_reg_.RdIsFPR == Rs2IsFPR)) {
                         reg2_value = ex_mem_reg_.alu_result;
                         forward_branch_b_ = ForwardSource::kFromExMem;
                         // std::cout << "Forwarding for Branch Resolution: RS2 from EX/MEM Stage." << std::endl;
@@ -538,13 +544,6 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
             }
 
         }
-        
-        
-        // Control Flow (Existing logic)
-        result.currentPC = if_id_reg.pc_plus_4 - 4;
-        result.isBranch = control_unit_.GetBranch(); 
-        result.isJAL = (opcode == 0b1101111);
-        result.isJump = (result.isJAL || opcode == 0b1100111);
 
         bool actualTaken = false;
         uint64_t actualTargetPC = 0;
@@ -734,6 +733,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
             bool overflow = false;
             std::tie(ALUResult, overflow) = alu_.execute(id_ex_reg.AluOperation, operand_a, operand_b);
 
+            // JAL and JALR Case
             if (id_ex_reg.isJump) {
                 ALUResult = id_ex_reg.currentPC + 4; // Return Address
             }
@@ -757,8 +757,6 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
         result.MemToReg = false;
         return result;
     }
-
-    // JAL and JALR Case
 
     // Branch Handling
 
@@ -1127,6 +1125,9 @@ void RV5SVM::Undo() {
             case 0: // GPR
                 registers_.WriteGpr(last.wb_write.reg_index, last.wb_write.old_value);
                 break;
+            case 2: // FPR
+                registers_.WriteFpr(last.wb_write.reg_index, last.wb_write.old_value);
+                break;
             default:
                 std::cerr << "Runtime Error: Invalid register type in Undo WB writeback." << std::endl;
                 break;
@@ -1357,6 +1358,9 @@ void RV5SVM::Redo() {
         switch(next.wb_write.reg_type) {
             case 0: // GPR
                 registers_.WriteGpr(next.wb_write.reg_index, next.wb_write.new_value);
+                break;
+            case 2: // FPR
+                registers_.WriteFpr(next.wb_write.reg_index, next.wb_write.new_value);
                 break;
             default:
                 std::cerr << "Runtime Error: Invalid register type in Redo WB writeback." << std::endl;
