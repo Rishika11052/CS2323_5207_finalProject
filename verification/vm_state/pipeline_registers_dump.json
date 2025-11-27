@@ -1,7 +1,7 @@
 {
   "IF_ID": {
-    "pc": "0x000000000000000c",
-    "line": 11,
+    "pc": "0x0000000000000014",
+    "line": 21,
     "instr": "0x00000013",
     "predictedTaken": false,
     "isStalled": false,
@@ -10,7 +10,7 @@
   },
   "ID_EX": {
     "CurrentPC": "0x0000000000000000",
-    "line": 5,
+    "line": 6,
     "rd": "0",
     "rs1": "0",
     "rs2": "0",
@@ -21,7 +21,7 @@
     "instr": "0x00000013",
     "seq_id": "0",
     "forward_a": "None",
-    "forward_b": "None",
+    "forward_b": "MemWb",
     "forward_branch_a": "None",
     "forward_branch_b": "None",
     "RegWrite": false,
@@ -43,7 +43,7 @@
     "mem_read": false,
     "MemToReg": false,
     "CurrentPC": "0x0000000000000000",
-    "line": 5,
+    "line": 6,
     "alu_result": "0x0000000000000000",
     "rd": "0",
     "reg2_value": "0x0000000000000000",
@@ -58,7 +58,7 @@
     "RegWrite": false,
     "MemToReg": false,
     "CurrentPC": "0x0000000000000000",
-    "line": 5,
+    "line": 6,
     "alu_result": "0x0000000000000000",
     "mem_data": "0x0000000000000000",
     "rd": "0",
@@ -67,6 +67,6 @@
     "valid": false
   },
   "Retired": {
-    "seq_id": 2
+    "seq_id": 6
   }
 }
