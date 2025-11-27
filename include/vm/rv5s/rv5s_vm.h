@@ -73,6 +73,18 @@ struct CycleDelta {
     
     uint64_t new_pc = 0;
     bool instruction_retired = false;
+
+    // Internal Variables for performance metrics : 
+
+    unsigned int old_forwarding_events = 0;
+    unsigned int new_forwarding_events = 0;
+
+    unsigned int old_num_branches = 0;
+    unsigned int new_num_branches = 0;
+
+    unsigned int old_branch_mispredictions = 0;
+    unsigned int new_branch_mispredictions = 0;
+
 };
 
 class RV5SVM : public VmBase {  
@@ -94,10 +106,6 @@ class RV5SVM : public VmBase {
         void PipelinedStep();
 
     private:
-
-        uint64_t num_forwards_ = 0;
-        uint64_t num_flushes_ = 0;
-
 
         // the flag that pipelineDecode will use to tell pipelineStep whether to stall or not
         bool id_stall_ = false;

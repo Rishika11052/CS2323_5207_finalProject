@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <list>
 
 namespace cache {
 
@@ -17,74 +18,69 @@ enum class ReplacementPolicy {
   Random  ///< Random replacement
 };
 
-enum class CacheType {
-  Instruction, ///< Cache for instructions
-  Data         ///< Cache for data
-};
-
-enum class CacheLineState {
-  Valid,       ///< Cache line is valid
-  Invalid,     ///< Cache line is invalid
-  Dirty        ///< Cache line has been modified
-};
-
-enum class WriteHitPolicy {
-  WriteThrough, ///< Write through policy
-  WriteBack     ///< Write back policy
-};
-
 enum class WriteMissPolicy {
   NoWriteAllocate, ///< Do not allocate on write miss
   WriteAllocate    ///< Allocate on write miss
 };
 
 struct CacheConfig {
+  bool cache_enabled = false; ///< Flag to indicate if the cache is enabled
   unsigned long lines = 0;  ///< Number of lines in the cache
-  unsigned long associativity = 0; ///< Associativity of the cache
-  unsigned long words_per_line = 0; ///< Number of words per line in the cache
+  unsigned long associativity = 1; ///< Associativity of the cache
+  unsigned long block_size = 4; ///< Block size of the cache in bytes
   ReplacementPolicy replacement_policy = ReplacementPolicy::LRU; ///< Replacement policy for the cache
-  CacheType cache_type = CacheType::Data; ///< Type of cache (instruction or data)
-  WriteHitPolicy write_hit_policy = WriteHitPolicy::WriteBack; ///< Write hit policy
   WriteMissPolicy write_miss_policy = WriteMissPolicy::NoWriteAllocate; ///< Write miss policy
   unsigned long size = 0;   ///< Size of the cache in bytes
 };
 
 struct CacheLine {
-  CacheLineState state = CacheLineState::Invalid; ///< State of the cache line
-  unsigned long tag = 0;    ///< Tag for the cache line
-  std::vector<uint8_t> data; ///< Data stored in the cache line
-  
+  bool valid = false;      ///< Valid bit for the cache line
+  uint64_t tag = 0;    ///< Tag for the cache line  
 };
 
 struct CacheStats {
   unsigned long accesses; ///< Total number of accesses to the cache
   unsigned long hits;     ///< Total number of hits in the cache
   unsigned long misses;   ///< Total number of misses in the cache
-
-
+  unsigned long evictions; ///< Total number of evictions from the cache
 };
 
 struct CacheSet {
-  unsigned long associativity; ///< Associativity of the cache set
-  std::vector<CacheLine> lines; ///< Lines in the cache set
-
-  CacheSet(unsigned long assoc)
-    : associativity(assoc), lines(assoc) {}
+  std::list<CacheLine> lines; ///< Cache lines
 };
 
 class Cache {
-  bool enabled; ///< Flag to indicate if the cache is enabled
-  CacheType type; ///< Type of cache (instruction or data)
-  CacheConfig config; ///< Configuration of the cache
-  CacheStats stats; ///< Statistics for the cache
+  public:
+    Cache() = default;
+    ~Cache() = default;
 
+    void Initialize(const CacheConfig& config);
+    void Reset();
+    void Access(uint64_t address, bool is_write);
 
-};
+    CacheStats GetStats() const {
+      return stats_;
+    };
 
+    CacheConfig GetConfig() const {
+      return config_;
+    };
 
+  private:
+    CacheConfig config_;               ///< Configuration of the cache
+    CacheStats stats_ = {0, 0, 0, 0};  ///< Statistics of the cache
+
+    std::vector<CacheSet> sets;
+
+    unsigned long num_sets = 0;
+    unsigned long offset_bits = 0;
+    unsigned long index_bits = 0;
+
+    void UpdateLRU(CacheSet& set, std::list<CacheLine>::iterator it);
+    void AllocateLine(CacheSet& set, uint64_t tag);
+  
+  };
 
 } // namespace cache
-
-
 
 #endif // CACHE_H

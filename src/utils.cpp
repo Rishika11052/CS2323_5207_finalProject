@@ -413,7 +413,7 @@ void SetupConfigFile() {
 
   config_file << "[Cache]\n";
   config_file << "cache_enabled=false\n";
-  config_file << "cache_size=0\n";
+  config_file << "number_of_lines=0\n";
   config_file << "cache_block_size=0\n";
   config_file << "cache_associativity=0\n";
   config_file << "cache_read_miss_policy=read_allocate\n";

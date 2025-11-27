@@ -165,7 +165,29 @@ namespace vm_config
         else if (section == "General") {
             // Do nothing for now (e.g., for 'name=vm')
         } else if (section == "Cache") {
-            // Do nothing for now
+            if (key == "cache_enabled") {
+                if (value == "true") {
+                    setCacheEnabled(true);
+                } else if (value == "false") {
+                    setCacheEnabled(false);
+                } else {
+                    throw std::invalid_argument("Unknown value for cache_enabled: " + value);
+                }
+            } else if (key == "number_of_lines") {
+                setNumberOfLines(std::stoull(value));
+            } else if (key == "cache_block_size") {
+                setCacheBlockSize(std::stoull(value));
+            } else if (key == "cache_associativity") {
+                setCacheAssociativity(std::stoull(value));
+            } else if (key == "cache_read_miss_policy") {
+                setCacheReadMissPolicy(value);
+            } else if (key == "cache_replacement_policy") {
+                setCacheReplacementPolicy(value);
+            } else if (key == "cache_write_hit_policy") {
+                setCacheWriteHitPolicy(value);
+            } else if (key == "cache_write_miss_policy") {
+                setCacheWriteMissPolicy(value);
+            }
         } else if (section == "BranchPrediction") {
             // Do nothing for now
         }
@@ -284,15 +306,15 @@ namespace vm_config
 
         
         config_file << "[Cache]\n";
-        config_file << "cache_enabled=false\n";
-        config_file << "cache_size=0\n";
-        config_file << "cache_block_size=0\n";
-        config_file << "cache_associativity=0\n";
-        config_file << "cache_read_miss_policy=read_allocate\n";
-        config_file << "cache_replacement_policy=LRU\n";
-        config_file << "cache_write_hit_policy=write_back\n";
-        config_file << "cache_write_miss_policy=write_allocate\n\n";
-        
+        config_file << "cache_enabled=" << (getCacheEnabled() ? "true" : "false") << "\n";
+        config_file << "number_of_lines=" << getNumberOfLines() << "\n";
+        config_file << "cache_block_size=" << getCacheBlockSize() << "\n";
+        config_file << "cache_associativity=" << getCacheAssociativity() << "\n";
+        config_file << "cache_read_miss_policy=" << getCacheReadMissPolicy() << "\n";
+        config_file << "cache_replacement_policy=" << getCacheReplacementPolicy() << "\n";
+        config_file << "cache_write_hit_policy=" << getCacheWriteHitPolicy() << "\n";
+        config_file << "cache_write_miss_policy=" << getCacheWriteMissPolicy() << "\n\n";
+
         config_file << "[Assembler]\n";
         config_file << "m_extension_enabled=" << (getMExtensionEnabled() ? "true" : "false") << "\n";
         config_file << "f_extension_enabled=" << (getFExtensionEnabled() ? "true" : "false") << "\n";

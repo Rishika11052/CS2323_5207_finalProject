@@ -55,6 +55,8 @@ public:
     float ipc_{};
     unsigned int stall_cycles_{};
     unsigned int branch_mispredictions_{};
+    unsigned int forwarding_events_{};
+    unsigned int num_branches_{};
 
     std::string output_status_;
 
@@ -91,6 +93,7 @@ public:
     virtual void Redo() = 0;
     virtual void Reset() = 0;
     void DumpState(const std::filesystem::path &filename);
+    void DumpCacheState(const std::filesystem::path &filename);
 
     void ModifyRegister(const std::string &reg_name, uint64_t value);
     void PushInput(const std::string& input) {

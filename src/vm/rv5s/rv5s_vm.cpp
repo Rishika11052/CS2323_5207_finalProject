@@ -11,6 +11,7 @@
 #include "config.h"
 #include "globals.h"
 #include "utils.h"
+#include "vm/cache/cache.h"
 #include <stdexcept>
 #include <algorithm>
 #include <fstream>
@@ -25,6 +26,7 @@ RV5SVM::RV5SVM() : VmBase() {
     try {
         DumpRegisters(globals::registers_dump_file_path, registers_);
         DumpState(globals::vm_state_dump_file_path);
+        DumpCacheState(globals::cache_dump_file_path);
         DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
     } catch (const std::exception& e) {
         std::cerr << "Warning: Failed to dump initial state in RV5SVM constructor: " << e.what() << std::endl;
@@ -50,6 +52,35 @@ void RV5SVM::Reset() {
     cycle_s_ = 0;
     registers_.Reset();
     memory_controller_.Reset();
+
+    // Build Cache Config from vm_config
+    cache::CacheConfig cache_config;
+
+    cache_config.cache_enabled = vm_config::config.getCacheEnabled();
+    cache_config.lines = vm_config::config.getNumberOfLines();
+    cache_config.block_size = vm_config::config.getCacheBlockSize();
+    cache_config.associativity = vm_config::config.getCacheAssociativity();
+
+    std::string rep_str = vm_config::config.getCacheReplacementPolicy();
+    if (rep_str == "LRU") {
+        cache_config.replacement_policy = cache::ReplacementPolicy::LRU;
+    } else if (rep_str == "FIFO") {
+        cache_config.replacement_policy = cache::ReplacementPolicy::FIFO;
+    } else if (rep_str == "Random") {
+        cache_config.replacement_policy = cache::ReplacementPolicy::Random;
+    } else {
+        // Default fallback
+        cache_config.replacement_policy = cache::ReplacementPolicy::LRU;
+    }
+
+    std::string miss_str = vm_config::config.getCacheWriteMissPolicy();
+    if (miss_str == "write_allocate") {
+        cache_config.write_miss_policy = cache::WriteMissPolicy::WriteAllocate;
+    } else {
+        cache_config.write_miss_policy = cache::WriteMissPolicy::NoWriteAllocate;
+    }
+
+    memory_controller_.Init(cache_config);
     
     if_id_reg_ = IF_ID_Register();
     id_ex_reg_ = ID_EX_Register();
@@ -79,6 +110,7 @@ void RV5SVM::Reset() {
     control_unit_.Reset();
 
     DumpState(globals::vm_state_dump_file_path);
+    DumpCacheState(globals::cache_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
     DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
@@ -112,6 +144,10 @@ void RV5SVM::PipelinedStep() {
     delta.old_forward_branch_b_ = forward_branch_b_;
     delta.old_instruction_sequence_counter_ = instruction_sequence_counter_;
     delta.old_last_retired_sequence_id_ = last_retired_sequence_id_;
+
+    delta.old_forwarding_events = forwarding_events_;
+    delta.old_num_branches = num_branches_;
+    delta.old_branch_mispredictions = branch_mispredictions_;
     
     // flag is used to initialize the CycleDelta Object
     //when mem_wb_reg.valid is true(when WriteBack happens)
@@ -215,6 +251,22 @@ void RV5SVM::PipelinedStep() {
     if (delta.instruction_retired) {
         instructions_retired_++;
     }
+    
+    cycle_s_++;
+
+    // Performance Metrics Calculation
+    if (instructions_retired_ > 0) {
+        cpi_ = static_cast<float>(cycle_s_) / static_cast<float>(instructions_retired_);
+        ipc_ = static_cast<float>(instructions_retired_) / static_cast<float>(cycle_s_);
+    } else {
+        cpi_ = 0.0f;
+        ipc_ = 0.0f;
+    }
+    
+    delta.new_forwarding_events = forwarding_events_;
+    delta.new_num_branches = num_branches_;
+    delta.new_branch_mispredictions = branch_mispredictions_;
+    
     // Push the new cycle's delta onto the undo stack.
     undo_stack_.push(delta);
     // By executing a new step (PipelinedStep), we are creating a new,
@@ -223,9 +275,7 @@ void RV5SVM::PipelinedStep() {
     while (!redo_stack_.empty()) {
         redo_stack_.pop();
     }
-
-    cycle_s_++;
-
+    
 }
 
 IF_ID_Register RV5SVM::pipelineFetch() {
@@ -243,7 +293,7 @@ IF_ID_Register RV5SVM::pipelineFetch() {
     result.instruction = 0x00000013; // Default to NOP
 
     try {
-        result.instruction = memory_controller_.ReadWord(program_counter_);
+        result.instruction = memory_controller_.ReadWord_d(program_counter_);
         result.pc_plus_4 = program_counter_ + 4;
     } catch (const std::out_of_range& e) {
         std::cerr << "Error during instruction fetch at PC = 0x" << std::hex << program_counter_ << " - " << e.what() << std::dec << std::endl;
@@ -450,9 +500,13 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
     
     // Control Flow (Existing logic)
     result.currentPC = if_id_reg.pc_plus_4 - 4;
-    result.isBranch = control_unit_.GetBranch(); 
+    result.isBranch = control_unit_.GetBranch();
     result.isJAL = (opcode == 0b1101111);
     result.isJump = (result.isJAL || opcode == 0b1100111);
+
+    if (result.isBranch || result.isJump) {
+        num_branches_++;
+    }
 
     result.rd = rd;
     result.rs1_idx = rs1;
@@ -532,11 +586,13 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
                     if (ex_mem_reg_.rd == rs1 && usesRS1 && (ex_mem_reg_.RdIsFPR == Rs1IsFPR)) {
                         reg1_value = ex_mem_reg_.alu_result;
                         forward_branch_a_ = ForwardSource::kFromExMem;
+                        forwarding_events_++;
                         // std::cout << "Forwarding for Branch Resolution: RS1 from EX/MEM Stage." << std::endl;
                     }
                     if (ex_mem_reg_.rd == rs2 && usesRS2 && (ex_mem_reg_.RdIsFPR == Rs2IsFPR)) {
                         reg2_value = ex_mem_reg_.alu_result;
                         forward_branch_b_ = ForwardSource::kFromExMem;
+                        forwarding_events_++;
                         // std::cout << "Forwarding for Branch Resolution: RS2 from EX/MEM Stage." << std::endl;
                     }
                 }
@@ -615,6 +671,7 @@ ID_EX_Register RV5SVM::pipelineDecode(const IF_ID_Register& if_id_reg) {
             // Misprediction
             result.isMisPredicted = true;
             result.actualTargetPC = actualTargetPC;
+            branch_mispredictions_++;
         }
 
         if (vm_config::config.getBranchPredictionType() == vm_config::BranchPredictionType::DYNAMIC1BIT) {
@@ -672,6 +729,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
             break;
         case ForwardSource::kFromExMem : 
             operand_a = ex_mem_reg_.alu_result;
+            forwarding_events_++;
             // std::cout << "Forwarding operand A from EX/MEM Stage: Value = 0x" << std::hex << operand_a << std::dec << std::endl;
             break;
         case ForwardSource::kFromMemWb :
@@ -682,7 +740,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
                 operand_a = mem_wb_reg_.alu_result;
                 // std::cout << "Forwarding operand A from MEM/WB Stage (ALU): Value = 0x" << std::hex << operand_a << std::dec << std::endl;
             }
-            num_forwards_ ++ ;
+            forwarding_events_++;
             break;
     }
 
@@ -694,6 +752,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
             break;
         case ForwardSource::kFromExMem: 
             result.reg2_value = ex_mem_reg_.alu_result;
+            forwarding_events_++;
             // std::cout << "Forwarding operand B from EX/MEM Stage: Value = 0x" << std::hex << result.reg2_value << std::dec << std::endl;
             break;
         case ForwardSource::kFromMemWb: 
@@ -704,6 +763,7 @@ EX_MEM_Register RV5SVM::pipelineExecute(const ID_EX_Register& id_ex_reg) {
                 // std::cout << "Forwarding operand B from MEM/WB Stage (ALU): Value = 0x" << std::hex << mem_wb_reg_.alu_result << std::dec << std::endl;
                 result.reg2_value = mem_wb_reg_.alu_result;
             }
+            forwarding_events_++;
             break;
     }
 
@@ -919,7 +979,7 @@ std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Reg
             // Save old bytes for UNDO
             writeInfo.old_bytes.resize(writeSize);
             for (size_t i = 0; i < writeSize; ++i) {
-                writeInfo.old_bytes[i] = memory_controller_.ReadByte(memoryAddress + i);
+                writeInfo.old_bytes[i] = memory_controller_.ReadByte_d(memoryAddress + i);
             }
 
             // Perform Write (Data comes from reg2_value, which holds float bits if it was a float store)
@@ -941,7 +1001,7 @@ std::pair<MEM_WB_Register, MemWriteInfo> RV5SVM::pipelineMemory(const EX_MEM_Reg
             // Save new bytes for REDO
             writeInfo.new_bytes.resize(writeSize);
             for (size_t i = 0; i < writeSize; ++i) {
-                writeInfo.new_bytes[i] = memory_controller_.ReadByte(memoryAddress + i);
+                writeInfo.new_bytes[i] = memory_controller_.ReadByte_d(memoryAddress + i);
             }
 
         } catch (const std::out_of_range& e) {
@@ -1017,10 +1077,16 @@ void RV5SVM::Run() {
     std::cout << "Total Cycles: " << cycle_s_ << std::endl;
     std::cout << "Instructions Retired: " << instructions_retired_ << std::endl;
     std::cout << "Stall Cycles: " << stall_cycles_ << std::endl; // You already have this!
-    std::cout << "Forwarding Events: " << num_forwards_ << std::endl;
-    std::cout << "Pipeline Flushes: " << num_flushes_ << std::endl;
+    std::cout << "Cycles Per Instruction (CPI): " << cpi_ << std::endl;
+    std::cout << "Instructions Per Cycle (IPC): " << ipc_ << std::endl;
+    std::cout << "Number of Forwarding Events: " << forwarding_events_ << std::endl;
+    std::cout << "Branch Mispredictions: " << branch_mispredictions_ << std::endl;
+    std::cout << "Branch Misprediction Rate: " << ((num_branches_ > 0) ? ((static_cast<double>(branch_mispredictions_) / static_cast<double>(num_branches_)) * 100.0) : 0.0) << "%" << std::endl;
+
+    memory_controller_.PrintCacheStatus();
 
     DumpState(globals::vm_state_dump_file_path);
+    DumpCacheState(globals::cache_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
     DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
@@ -1045,6 +1111,7 @@ void RV5SVM::Step() {
     }
 
     DumpState(globals::vm_state_dump_file_path);
+    DumpCacheState(globals::cache_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
     DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
     
@@ -1081,6 +1148,7 @@ void RV5SVM::DebugRun() {
     }
 
     DumpState(globals::vm_state_dump_file_path);
+    DumpCacheState(globals::cache_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
     DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
@@ -1140,7 +1208,7 @@ void RV5SVM::Undo() {
     //reverse that change
     if (last.mem_write.occurred) {
         for (size_t i = 0; i < last.mem_write.old_bytes.size(); ++i) {
-            memory_controller_.WriteByte(last.mem_write.address + i, last.mem_write.old_bytes[i]);
+            memory_controller_.WriteByte_d(last.mem_write.address + i, last.mem_write.old_bytes[i]);
         }
     }
 
@@ -1149,12 +1217,23 @@ void RV5SVM::Undo() {
     if (last.instruction_retired && instructions_retired_ > 0) {
         instructions_retired_--;
     }
+
+    // Performance Metrics Update
+    cpi_ = (instructions_retired_ > 0) ? static_cast<double>(cycle_s_) / static_cast<double>(instructions_retired_) : 0.0;
+    ipc_ = (cycle_s_ > 0) ? static_cast<double>(instructions_retired_) / static_cast<double>(cycle_s_) : 0.0;
+
+    // Update other metrics
+    forwarding_events_ = last.old_forwarding_events;
+    branch_mispredictions_ = last.old_branch_mispredictions;
+    num_branches_ = last.old_num_branches;
+
     // pushes the snapshot to the redo stack
     redo_stack_.push(last);
 
     std::cout << "VM_UNDO_COMPLETED" << std::endl;
     output_status_ = "VM_UNDO_COMPLETED";
     DumpState(globals::vm_state_dump_file_path);
+    DumpCacheState(globals::cache_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
     DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 
@@ -1371,7 +1450,7 @@ void RV5SVM::Redo() {
     //if mem write occured then update the memory 
     if (next.mem_write.occurred) {
         for (size_t i = 0; i < next.mem_write.new_bytes.size(); ++i) {
-            memory_controller_.WriteByte(next.mem_write.address + i, next.mem_write.new_bytes[i]);
+            memory_controller_.WriteByte_d(next.mem_write.address + i, next.mem_write.new_bytes[i]);
         }
     }
     //update the cycle count
@@ -1380,12 +1459,22 @@ void RV5SVM::Redo() {
         instructions_retired_++;
     }
 
+    // Performance Metrics Update
+    cpi_ = (instructions_retired_ > 0) ? static_cast<double>(cycle_s_) / static_cast<double>(instructions_retired_) : 0.0;
+    ipc_ = (cycle_s_ > 0) ? static_cast<double>(instructions_retired_) / static_cast<double>(cycle_s_) : 0.0;
+
+    // Update other metrics
+    forwarding_events_ = next.new_forwarding_events;
+    branch_mispredictions_ = next.new_branch_mispredictions;
+    num_branches_ = next.new_num_branches;
+
     // push it onto the undo stack
     undo_stack_.push(next);
 
     std::cout << "VM_REDO_COMPLETED" << std::endl;
     output_status_ = "VM_REDO_COMPLETED";
     DumpState(globals::vm_state_dump_file_path);
+    DumpCacheState(globals::cache_dump_file_path);
     DumpRegisters(globals::registers_dump_file_path, registers_);
     DumpPipelineRegisters(globals::pipeline_registers_dump_file_path);
 

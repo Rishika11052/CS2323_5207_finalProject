@@ -42,6 +42,26 @@ struct VmConfig {
   uint64_t text_section_start = 0x0; // Default start address for text section
   uint64_t bss_section_start = 0x11000000; // Default start address for BSS section
 
+  // Cache Configuration
+  // [Cache]
+  // cache_enabled=false
+  // number_of_lines=0
+  // cache_block_size=0
+  // cache_associativity=0
+  // cache_read_miss_policy=read_allocate
+  // cache_replacement_policy=LRU
+  // cache_write_hit_policy=write_back
+  // cache_write_miss_policy=write_allocate
+
+  bool cache_enabled = false;
+  uint64_t number_of_lines = 0;
+  uint64_t cache_block_size = 0;
+  uint64_t cache_associativity = 0;
+  std::string cache_read_miss_policy = "read_allocate";
+  std::string cache_replacement_policy = "LRU";
+  std::string cache_write_hit_policy = "write_back";
+  std::string cache_write_miss_policy = "write_allocate";
+
   uint64_t instruction_execution_limit = 100;
 
   bool m_extension_enabled = true;
@@ -183,6 +203,64 @@ struct VmConfig {
       default:
         return "none";
     }
+  }
+
+  // Getters and Setters for Cache Configuration
+
+  bool getCacheEnabled() const {
+    return cache_enabled;
+  }
+  void setCacheEnabled(bool enabled) {
+    cache_enabled = enabled;
+  }
+
+  uint64_t getNumberOfLines() const {
+    return number_of_lines;
+  }
+  void setNumberOfLines(uint64_t size) {
+    number_of_lines = size;
+  }
+
+  uint64_t getCacheBlockSize() const {
+    return cache_block_size;
+  }
+  void setCacheBlockSize(uint64_t size) {
+    cache_block_size = size;
+  }
+
+  uint64_t getCacheAssociativity() const {
+    return cache_associativity;
+  }
+  void setCacheAssociativity(uint64_t associativity) {
+    cache_associativity = associativity;
+  }
+
+  void setCacheReadMissPolicy(const std::string &policy) {
+    cache_read_miss_policy = policy;
+  }
+  std::string getCacheReadMissPolicy() const {
+    return cache_read_miss_policy;
+  }
+
+  std::string getCacheWriteMissPolicy() const {
+    return cache_write_miss_policy;
+  }
+  void setCacheWriteMissPolicy(const std::string &policy) {
+    cache_write_miss_policy = policy;
+  }
+
+  std::string getCacheReplacementPolicy() const {
+    return cache_replacement_policy;
+  }
+  void setCacheReplacementPolicy(const std::string &policy) {
+    cache_replacement_policy = policy;
+  }
+
+  std::string getCacheWriteHitPolicy() const {
+    return cache_write_hit_policy;
+  }
+  void setCacheWriteHitPolicy(const std::string &policy) {
+    cache_write_hit_policy = policy;
   }
 
   void modifyConfig(const std::string &section, const std::string &key, const std::string &value, bool shouldSave = true);
