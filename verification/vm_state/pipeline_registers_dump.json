@@ -1,0 +1,72 @@
+{
+  "IF_ID": {
+    "pc": "0x000000000000000c",
+    "line": 11,
+    "instr": "0x00000013",
+    "predictedTaken": false,
+    "isStalled": false,
+    "seq_id": "0",
+    "valid": false
+  },
+  "ID_EX": {
+    "CurrentPC": "0x0000000000000000",
+    "line": 5,
+    "rd": "0",
+    "rs1": "0",
+    "rs2": "0",
+    "reg1_value": "0x0000000000000000",
+    "reg2_value": "0x0000000000000000",
+    "imm": "0",
+    "funct3": "0x00",
+    "instr": "0x00000013",
+    "seq_id": "0",
+    "forward_a": "None",
+    "forward_b": "None",
+    "forward_branch_a": "None",
+    "forward_branch_b": "None",
+    "RegWrite": false,
+    "MemRead": false,
+    "MemWrite": false,
+    "MemToReg": false,
+    "AluSrc": false,
+    "AluOperation": "kNone",
+    "isBranch": false,
+    "isJAL": false,
+    "isJump": false,
+    "isMisPredicted": false,
+    "actualTargetPC": "0x0000000000000000",
+    "valid": false
+  },
+  "EX_MEM": {
+    "RegWrite": false,
+    "mem_write": false,
+    "mem_read": false,
+    "MemToReg": false,
+    "CurrentPC": "0x0000000000000000",
+    "line": 5,
+    "alu_result": "0x0000000000000000",
+    "rd": "0",
+    "reg2_value": "0x0000000000000000",
+    "funct3": "0x00",
+    "instr": "0x00000013",
+    "seq_id": "0",
+    "isControlHazard": false,
+    "targetPC": "0x0000000000000000",
+    "valid": false
+  },
+  "MEM_WB": {
+    "RegWrite": false,
+    "MemToReg": false,
+    "CurrentPC": "0x0000000000000000",
+    "line": 5,
+    "alu_result": "0x0000000000000000",
+    "mem_data": "0x0000000000000000",
+    "rd": "0",
+    "instr": "0x00000013",
+    "seq_id": "0",
+    "valid": false
+  },
+  "Retired": {
+    "seq_id": 2
+  }
+}

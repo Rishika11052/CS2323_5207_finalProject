@@ -1,0 +1,16 @@
+{
+    "program_counter": "0x00000010",
+    "current_line": 0,
+    "current_instruction": "0x00000000",
+    "disassembly_line_number": 0,
+    "cycle_count": 6,
+    "instructions_retired": 2,
+    "cpi": 3,
+    "ipc": 0.333333,
+    "stall_cycles": 0,
+    "branch_mispredictions": 0,
+    "forwarding_events": 0,
+    "misprediction_rate": 0,
+    "breakpoints": [0],
+    "output_status": "VM_PROGRAM_END"
+}
